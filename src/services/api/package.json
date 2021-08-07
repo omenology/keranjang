@@ -2,6 +2,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.15",
     "swagger-jsdoc": "^6.1.0",
@@ -21,7 +22,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.ts",
-    "build":"tsc -p ."
+    "build": "tsc -p ."
   },
   "keywords": [
     "api",
