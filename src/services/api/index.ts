@@ -3,6 +3,8 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
 
+import connection from "./helpers/connection";
+
 const app: Express = express();
 
 // cors config
