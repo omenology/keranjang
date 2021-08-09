@@ -30,6 +30,13 @@ app.use("*", (req, res) => {
 const host: any = process.env.HOST || "localhost"; // hostname
 const port: any = process.env.PORT || 4000; // used port
 
-app.listen(port, host, () => {
-  console.log(`Service start on host : ${host} and port : ${port}`);
-});
+connection
+  .authenticate()
+  .then(() => {
+    app.listen(port, host, () => {
+      console.log(`Service start on host : ${host} and port : ${port}`);
+    });
+  })
+  .catch((reason) => {
+    console.log(reason);
+  });
