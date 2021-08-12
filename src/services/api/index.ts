@@ -4,6 +4,7 @@ import helmet from "helmet";
 import cors from "cors";
 
 import connection from "./helpers/connection";
+import routes from "./routes";
 
 const app: Express = express();
 
@@ -21,10 +22,14 @@ app.use(express.urlencoded({ extended: false }));
 // helmet
 app.use(helmet()); // Default setting -> DNS prefetching, clickjacking, hide Power By, HSTS, X-Download-Options IE8+, sniffing MIME Type, XSS Protection
 
+// routes enrty
+app.use("/", routes);
 // route not found
 app.use("*", (req, res) => {
   res.status(404).send("Endpoint Not Found");
 });
+
+connection.sync({ force: true });
 
 /* Server initialization */
 const host: any = process.env.HOST || "localhost"; // hostname

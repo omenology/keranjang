@@ -6,8 +6,9 @@ import { Sequelize, DataTypes as TypeData } from "sequelize";
 //   useUnifiedTopology: true,
 //   dbName: "keranjang",
 // });
-export default sequelize;
-export const sequelize = new Sequelize(
+const sequelizeInstance = new Sequelize(
   "postgres://tes:password@localhost:5432/tes"
 );
+export default sequelizeInstance;
+export const sequelize = sequelizeInstance;
 export const DataTypes = TypeData;

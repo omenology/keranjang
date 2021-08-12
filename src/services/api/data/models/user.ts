@@ -1,7 +1,7 @@
 import { sequelize, DataTypes } from "../../helpers/connection";
 
 export default sequelize.define(
-  "barang",
+  "user",
   {
     id: {
       type: DataTypes.UUID,
@@ -9,29 +9,23 @@ export default sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-    name: {
+    username: {
       type: DataTypes.STRING,
-      defaultValue: "",
       allowNull: false,
+      unique: true,
     },
-    price: {
-      type: DataTypes.FLOAT,
-      defaultValue: 0.0,
-      allowNull: false,
-    },
-    description: {
+    email: {
       type: DataTypes.STRING,
-      defaultValue: "",
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
     },
-    quantities: {
-      type: DataTypes.NUMBER,
-      defaultValue: 0,
+    password: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },
-  {
-    tableName: "barang",
-    timestamps: true,
-    paranoid: true,
-  }
+  { tableName: "user", timestamps: true, paranoid: true }
 );
