@@ -1,9 +1,12 @@
 import { Router } from "express";
+import barangRoute from "./barang";
+import userRoute from "./user";
+import keranjangRoute from "./keranjang";
 
 const route = Router({ mergeParams: true });
 
-route.use("/barang", (req, res) => {
-  res.send({ tes: "mantap" }).status(200);
-});
+route.use("/barang", barangRoute);
+route.use("/user", userRoute);
+route.use("/keranjang", keranjangRoute);
 
 export default route;

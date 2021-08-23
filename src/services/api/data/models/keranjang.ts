@@ -10,5 +10,14 @@ export default sequelize.define(
       primaryKey: true,
     },
   },
-  { tableName: "keranjang", timestamps: true, paranoid: true }
+  {
+    tableName: "keranjang",
+    timestamps: true,
+    freezeTableName: true,
+    hooks: {
+      afterDestroy: (instance, option) => {
+        console.log("after destroy ker");
+      },
+    },
+  }
 );

@@ -20,18 +20,35 @@ export default sequelize.define(
       allowNull: false,
     },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       defaultValue: "",
     },
-    quantities: {
-      type: DataTypes.NUMBER,
-      defaultValue: 0,
+    image: {
+      type: DataTypes.STRING,
+      defaultValue: "",
       allowNull: false,
     },
   },
   {
     tableName: "barang",
     timestamps: true,
-    paranoid: true,
+    freezeTableName: true,
+    hooks: {
+      afterUpdate: (ins, opt) => {
+        console.log("mantapppp", ins);
+      },
+      afterDestroy: (ins) => {
+        console.log("after destroy");
+      },
+      beforeDestroy: () => {
+        console.log("befor destroy");
+      },
+      afterFind: (ins, opt) => {
+        console.log("after find");
+      },
+      beforeFind: () => {
+        console.log("before find");
+      },
+    },
   }
 );

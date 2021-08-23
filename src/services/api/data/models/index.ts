@@ -8,14 +8,11 @@ user.hasMany(keranjang, {
   onDelete: "CASCADE",
 });
 
-barang.belongsTo(keranjang, {
+keranjang.belongsTo(barang, {
   constraints: true,
   onUpdate: "CASCADE",
   onDelete: "CASCADE",
+  hooks: true,
 });
 
-export const models = {
-  barang,
-  user,
-  keranjang,
-};
+export { barang, user, keranjang };

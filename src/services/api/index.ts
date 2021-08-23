@@ -3,8 +3,9 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
 
-import connection from "./helpers/connection";
+import { sequelize } from "./helpers/connection";
 import routes from "./routes";
+import { syncModels } from "./helpers/utils";
 
 const app: Express = express();
 
@@ -29,19 +30,21 @@ app.use("*", (req, res) => {
   res.status(404).send("Endpoint Not Found");
 });
 
-connection.sync({ force: true });
-
 /* Server initialization */
 const host: any = process.env.HOST || "localhost"; // hostname
 const port: any = process.env.PORT || 4000; // used port
 
-connection
-  .authenticate()
-  .then(() => {
-    app.listen(port, host, () => {
-      console.log(`Service start on host : ${host} and port : ${port}`);
-    });
-  })
-  .catch((reason) => {
-    console.log(reason);
-  });
+// sync models with db
+// syncModels();
+
+app.listen(port, host, () => {
+  console.log(`Service start on host : ${host} and port : ${port}`);
+});
+
+// connection
+//   .authenticate()
+//   .then(() => {
+//   })
+//   .catch((reason) => {
+//     console.log(reason);
+//   });

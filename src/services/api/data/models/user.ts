@@ -27,5 +27,5 @@ export default sequelize.define(
       allowNull: false,
     },
   },
-  { tableName: "user", timestamps: true, paranoid: true }
+  { tableName: "user", timestamps: true, paranoid: true, freezeTableName: true }
 );
