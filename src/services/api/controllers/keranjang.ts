@@ -9,7 +9,7 @@ export const addToKeranjang = async (req: Request, res: Response) => {
     if (idBarang.error) return res.status(400).send({ message: "id fortmat is not valid" });
 
     const data = await keranjang.create({
-      userId: "826a8caf-c493-4005-bf2d-e08a6a1bbcf0",
+      userId: req.decoded.userId,
       barangId: idBarang.value,
     });
     return res.status(200).send({ data });
@@ -25,7 +25,7 @@ export const getKeranjang = async (req: Request, res: Response) => {
     const { value: offset } = Joi.number().default(0).validate(req.query.offset);
     const { rows: data, count: total } = await keranjang.findAndCountAll({
       where: {
-        userId: "useridfromjwt",
+        userId: req.decoded.userId,
       },
     });
 
