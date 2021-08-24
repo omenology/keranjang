@@ -35,7 +35,7 @@ export default sequelize.define(
     freezeTableName: true,
     hooks: {
       afterUpdate: (ins, opt) => {
-        console.log("mantapppp", ins);
+        console.log("after update");
       },
       afterDestroy: (ins) => {
         console.log("after destroy");

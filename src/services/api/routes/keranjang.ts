@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { createKeranjang, getKeranjang } from "../controllers";
+import { addToKeranjang, getKeranjang } from "../controllers";
 
 const route = Router({ mergeParams: true });
 
-route.post("/", createKeranjang);
+route.post("/", addToKeranjang);
 route.get("/", getKeranjang);
 
 export default route;

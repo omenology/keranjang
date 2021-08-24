@@ -1,8 +1,3 @@
-export {
-  getAllBarang,
-  createBarang,
-  deleteBarang,
-  deletePermanent,
-} from "./barang";
+export { getAllBarang, createBarang, updateBarang, deleteBarang } from "./barang";
 export { createUser } from "./user";
-export { createKeranjang, getKeranjang } from "./keranjang";
+export { addToKeranjang, getKeranjang } from "./keranjang";
