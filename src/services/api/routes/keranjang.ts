@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { addToKeranjang, getKeranjang, isAuth } from "../controllers";
+import { addToKeranjang, deletBarangFromKeranjang, getKeranjang, isAuth } from "../controllers";
 
 const route = Router({ mergeParams: true });
 
-route.post("/", isAuth, addToKeranjang);
 route.get("/", isAuth, getKeranjang);
+route.post("/:id", isAuth, addToKeranjang);
+route.delete("/:id", isAuth, deletBarangFromKeranjang);
 
 export default route;

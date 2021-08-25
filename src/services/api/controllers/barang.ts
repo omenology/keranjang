@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 
-import { barang, keranjang } from "../data/models";
+import { barang } from "../data/models";
 
 // validation body request
 const bodySchema = Joi.object({

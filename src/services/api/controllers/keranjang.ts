@@ -42,7 +42,7 @@ export const deletBarangFromKeranjang = async (req: Request, res: Response) => {
     if (idBarang.error) return res.status(400).send({ message: "id fortmat is not valid" });
     const data = await keranjang.findOne({
       where: {
-        userId: "useridfromjwt",
+        userId: req.decoded.userId,
         barangId: idBarang.value,
       },
     });

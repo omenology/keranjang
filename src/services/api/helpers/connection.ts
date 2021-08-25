@@ -1,6 +1,5 @@
 import mongose from "mongoose";
 import { Sequelize, DataTypes as TypeData } from "sequelize";
-import { user } from "../data/models";
 
 // export default mongose.connect("mongodb://root:password@localhost:27017", {
 //   useNewUrlParser: true,
@@ -8,9 +7,7 @@ import { user } from "../data/models";
 //   dbName: "keranjang",
 // });
 
-const sequelizeInstance = new Sequelize(
-  "postgres://tes:password@localhost:5432/development_db"
-);
+const sequelizeInstance = new Sequelize("postgres://tes:password@localhost:5432/development_db");
 
 export default sequelizeInstance;
 export const sequelize = sequelizeInstance;

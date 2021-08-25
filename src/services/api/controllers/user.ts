@@ -33,6 +33,8 @@ export const createUser = async (req: Request, res: Response) => {
     });
     return res.status(200).send({ data });
   } catch (error) {
+    if (error.original.code == 23505) return res.status(400).send({ message: error.original.detail });
+
     console.log(error);
     res.sendStatus(500);
   }

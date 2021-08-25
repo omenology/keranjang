@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
+
 import { TOKEN_LIFE, TOKEN_SECREAT } from "../helpers/utils";
+import { user } from "../data/models";
 
 type payload = { userId: string; username: string; email: string };
 type decodeToken = { data: payload | null; message: string };
@@ -54,6 +57,27 @@ export const isAuth = async (req: Request, res: Response, next: NextFunction) =>
 
 export const login = async (req: Request, res: Response) => {
   try {
+    const body = Joi.object({
+      email: Joi.string().email(),
+      username: Joi.string(),
+      password: Joi.string().min(4).max(16).required(),
+    })
+      .xor("email", "username")
+      .validate(req.body);
+    if (body.error) return res.status(400).send({ message: body.error.message });
+
+    const data = await user.findOne({
+      where: {
+        [Op.or]: [{ email: body.value.email || "" }, { username: body.value.username || "" }],
+        password: body.value.password,
+      },
+    });
+    if (!data) if (!data) return res.status(401).send({ message: "email, username or password was wrong" });
+
+    const { id, email, username } = data?.get();
+    const token = generateToken({ email, username, userId: id });
+
+    return res.status(200).send({ data: { token } });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);

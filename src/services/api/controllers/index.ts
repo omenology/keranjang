@@ -1,4 +1,4 @@
 export { getAllBarang, createBarang, updateBarang, deleteBarang } from "./barang";
 export { createUser } from "./user";
-export { addToKeranjang, getKeranjang } from "./keranjang";
+export { addToKeranjang, getKeranjang, deletBarangFromKeranjang } from "./keranjang";
 export { isAuth, login } from "./auth";
