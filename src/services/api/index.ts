@@ -7,6 +7,10 @@ import { sequelize } from "./helpers/connection";
 import routes from "./routes";
 import { syncModels } from "./helpers/utils";
 
+// todo
+// morgan log
+// corn job
+
 const app: Express = express();
 
 // cors config
