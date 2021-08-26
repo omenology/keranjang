@@ -1,9 +1,25 @@
+.textBtn {
+  cursor: pointer;
+}
+
+.textBtn:hover {
+  font-weight: 500;
+}
+
 .ifocus:focus {
   box-shadow: none;
 }
 
+.errorMsg {
+  position: absolute;
+  bottom: 0;
+  text-align: right;
+  padding-right: 12px;
+  font-size: 9px;
+}
+
 .bgContainer {
-  background: linear-gradient(232deg, #8bc6ec, #9599e2);
+  background: linear-gradient(232deg, rgba(48, 207, 208, 1) 11.2%, rgba(51, 8, 103, 1) 92.5%);
   background-size: 400% 400%;
 
   -webkit-animation: AnimationName 17s ease infinite;
