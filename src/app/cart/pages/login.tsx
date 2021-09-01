@@ -81,7 +81,7 @@ const Login = (props) => {
           Register
         </span>{" "}
         |{" "}
-        <span onClick={() => console.log("forget")} className={`${css.textBtn}`}>
+        <span onClick={() => router.push("/forget")} className={`${css.textBtn}`}>
           Forget Password?
         </span>
       </p>
