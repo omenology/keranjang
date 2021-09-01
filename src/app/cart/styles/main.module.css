@@ -1,0 +1,34 @@
+.nav {
+  z-index: 9999;
+  background-color: ghostwhite;
+  position: sticky;
+  top: 0;
+  box-shadow: 2px 3px 9px 1px rgba(0, 0, 0, 0.16);
+  -webkit-box-shadow: 2px 3px 9px 1px rgba(0, 0, 0, 0.16);
+  -moz-box-shadow: 2px 3px 9px 1px rgba(0, 0, 0, 0.16);
+}
+
+.active {
+  border-bottom: 2px solid rgb(31, 31, 31);
+}
+
+.navBtn {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.navBtn > span {
+  color: #252525 !important;
+}
+
+.navBtn:hover {
+  border-bottom: 2px solid rgb(97, 123, 172);
+  border-width: 50%;
+  font-weight: 300;
+}
+
+.navBtn:active {
+  border-bottom: 2px solid rgb(31, 31, 31);
+  border-width: 50%;
+  font-weight: 500;
+}
