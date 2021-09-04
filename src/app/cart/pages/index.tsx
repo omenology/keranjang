@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, useRef } from "react";
 import Head from "next/head";
 
 import css from "../styles/main.module.css";
-import { Button } from "react-bootstrap";
+import { Button, Dropdown } from "react-bootstrap";
 
 const Index = () => {
   const navEl = useRef(null);
@@ -20,7 +20,7 @@ const Index = () => {
       <Head>
         <title>Belanja dong!!!</title>
       </Head>
-      <div className={`d-flex justify-content-between ${css.nav}`}>
+      <div className={`d-flex justify-content-evenly justify-content-md-between ${css.nav}`}>
         <div className="d-none d-md-flex align-items-center justify-content-center ps-3">
           <i className="fas fa-grin-stars fs-1" style={{ color: "rgb(31, 31, 31)" }}></i>
         </div>
@@ -38,7 +38,19 @@ const Index = () => {
           </ul>
         </div>
         <div className="d-flex align-items-center justify-content-center pe-3">
-          <i className="fas fa-ellipsis-h"></i>
+          <Dropdown>
+            <Dropdown.Toggle className={`${css.ddBtn}`} variant="link">
+              <i className="fas fa-ellipsis-h" />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item>
+                <i className="fas fa-user-circle" /> Profile
+              </Dropdown.Item>
+              <Dropdown.Item>
+                <i className="fas fa-sign-out-alt" /> Logout
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </div>
       <div className={`container-fluid ${css.container}`}>

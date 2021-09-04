@@ -51,3 +51,15 @@
   border-width: 50%;
   font-weight: 500;
 }
+
+.ddBtn {
+  color: #252525 !important;
+}
+
+.ddBtn:hover {
+  color: #125d8f !important;
+}
+
+.ddBtn::after {
+  display: none;
+}
