@@ -1,5 +1,5 @@
 .nav {
-  z-index: 9999;
+  z-index: 900;
   position: fixed;
   top: 0;
   width: 100%;
@@ -13,17 +13,6 @@
 .container {
   margin-top: 58px;
   margin-bottom: 0;
-}
-
-@media only screen and (max-width: 600px) {
-  .nav {
-    bottom: 0;
-    top: auto;
-  }
-  .container {
-    margin-top: 0;
-    margin-bottom: 58px;
-  }
 }
 
 .active {
@@ -62,4 +51,26 @@
 
 .ddBtn::after {
   display: none;
+}
+
+.addBtn {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+@media only screen and (max-width: 600px) {
+  .nav {
+    bottom: 0;
+    top: auto;
+  }
+  .container {
+    margin-top: 0;
+    margin-bottom: 58px;
+  }
+  .addBtn {
+    bottom: 65px;
+  }
 }
