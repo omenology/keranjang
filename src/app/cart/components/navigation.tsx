@@ -1,16 +1,17 @@
 import React, { useRef, BaseSyntheticEvent } from "react";
+import { useRouter } from "next/router";
 
 import { Dropdown } from "react-bootstrap";
 import css from "../styles/main.module.css";
 
 const Navigation = () => {
   const navEl = useRef(null);
-
+  const router = useRouter();
+  console.log("nav ren");
   const clickHandler = (e: BaseSyntheticEvent) => {
     for (const el of navEl.current.children) {
       el.classList.remove(`${css.active}`);
     }
-
     e.currentTarget.classList.add(`${css.active}`);
   };
 
@@ -21,13 +22,31 @@ const Navigation = () => {
       </div>
       <div className={`p-2`}>
         <ul ref={navEl} className="nav justify-content-center">
-          <li className={`nav-item ${css.navBtn} ${css.active}`} onClick={clickHandler}>
+          <li
+            className={`nav-item ${css.navBtn} ${css.active}`}
+            onClick={(e) => {
+              clickHandler(e);
+              router.push("/");
+            }}
+          >
             <span className="nav-link">Beranda</span>
           </li>
-          <li className={`nav-item ${css.navBtn}`} onClick={clickHandler}>
+          <li
+            className={`nav-item ${css.navBtn}`}
+            onClick={(e) => {
+              clickHandler(e);
+              router.push("/keranjang");
+            }}
+          >
             <span className="nav-link">Keranjang</span>
           </li>
-          <li className={`nav-item ${css.navBtn}`} onClick={clickHandler}>
+          <li
+            className={`nav-item ${css.navBtn}`}
+            onClick={(e) => {
+              clickHandler(e);
+              router.push("/riwayat");
+            }}
+          >
             <span className="nav-link">Riwayat</span>
           </li>
         </ul>

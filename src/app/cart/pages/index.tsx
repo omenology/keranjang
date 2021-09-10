@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Head from "next/head";
 
-import { Button, Dropdown, OverlayTrigger, Tooltip, Modal } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip, Modal } from "react-bootstrap";
 import css from "../styles/main.module.css";
 import Items from "../components/items";
 import Navigation from "../components/navigation";
+import Container from "../components/container";
 
 const Index = () => {
   const [modalShow, setModalShow] = useState(false);
@@ -17,15 +18,19 @@ const Index = () => {
       <Head>
         <title>Belanja dong!!!</title>
       </Head>
+
       <Navigation />
-      <div className={`container-fluid ${css.container}`}>
+
+      <Container>
         <Items data="data" />
-      </div>
+      </Container>
+
       <OverlayTrigger overlay={<Tooltip>Add Product</Tooltip>}>
         <Button onClick={modalOpenHandler} className={`rounded-circle ${css.addBtn}`}>
           <i className="fas fa-plus" />
         </Button>
       </OverlayTrigger>
+
       <Modal show={modalShow} onHide={modalCloseHandler} backdrop="static" keyboard={false} centered>
         <Modal.Header closeButton>
           <Modal.Title>Add Item</Modal.Title>
