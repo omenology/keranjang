@@ -2,7 +2,10 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { FloatingLabel, Button, Form } from "react-bootstrap";
+import { FloatingLabel, Button, Form, Spinner } from "react-bootstrap";
+
+import { useAuth } from "../context";
+import { emailOrUsername } from "../utils";
 import LoginWraper from "../components/LoginWraper";
 
 import css from "../styles/login.module.css";
@@ -14,19 +17,14 @@ const Login = (props) => {
     formState: { errors },
   } = useForm();
   const router = useRouter();
+  const { state, login } = useAuth();
 
   const onSubmit = (data: { identifier: string; password: string }): void => {
-    console.log({
-      ...isEmail(data.identifier),
+    const payloadLogin = {
+      ...emailOrUsername(data.identifier),
       password: data.password,
-    });
-  };
-
-  const isEmail = (str: string): object => {
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(str)) {
-      return { email: str };
-    }
-    return { username: str };
+    };
+    login(payloadLogin);
   };
 
   return (
@@ -72,7 +70,7 @@ const Login = (props) => {
         </div>
         <div className="d-grid gap-2">
           <Button type="submit" size="lg" variant="dark" style={{ borderRadius: "0 0 15px 15px" }}>
-            SIGN IN
+            {state.loading ? <Spinner animation="border" variant="light" /> : "SIGN IN"}
           </Button>
         </div>
       </form>

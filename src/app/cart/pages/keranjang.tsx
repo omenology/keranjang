@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 
-import { Form, Table, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Head from "next/head";
+import { Table, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
 
@@ -48,7 +49,9 @@ const Keranjang = () => {
 
   return (
     <>
-      <Navigation />
+      <Head>
+        <title>Keranjang</title>
+      </Head>
       <Container>
         <Table>
           <thead>
@@ -124,5 +127,7 @@ const Keranjang = () => {
     </>
   );
 };
+
+Keranjang.navigation = Navigation;
 
 export default Keranjang;
