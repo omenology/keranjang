@@ -2,13 +2,15 @@ import React from "react";
 import { Button } from "react-bootstrap";
 
 import { dataBarangType } from "../utils";
+import { useGetKeranjang } from "../utils/keranjang";
 
 type props = {
   data: dataBarangType;
 };
 const Item = ({ data }: props) => {
+  const { addToKeranjang } = useGetKeranjang();
   const addToCartHandler = (id: string): void => {
-    console.log(id);
+    addToKeranjang(id);
   };
   return (
     <div className="col-6 col-md-3 p-1">

@@ -1,6 +1,7 @@
 import barang from "./barang";
 import user from "./user";
 import keranjang from "./keranjang";
+import checkout from "./checkout";
 
 user.hasMany(keranjang, {
   constraints: true,
@@ -15,4 +16,4 @@ keranjang.belongsTo(barang, {
   hooks: true,
 });
 
-export { barang, user, keranjang };
+export { barang, user, keranjang, checkout };

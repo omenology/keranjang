@@ -29,8 +29,8 @@ app.use("*", (req: Request, res: Response) => {
 
 connection
   .then(() => {
-    app.listen(4000, "localhost");
-    console.log("app listening on localhost:4000");
+    app.listen(4004, "localhost");
+    console.log("app listening on localhost:4004");
   })
   .catch((err) => {
     console.log(err, "error connect to db");

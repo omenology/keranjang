@@ -1,51 +1,42 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
+import { useGetKeranjang } from "../utils";
 
 import Head from "next/head";
 import { Table, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
+import { stringify } from "querystring";
 
 const Keranjang = () => {
   const refTotal = useRef([]);
   const refQuantity = useRef([]);
   const refCheck = useRef([]);
-
   const [total, setTotal] = useState(0);
+  const [reRender, setRerender] = useState(true);
 
-  const data = [
-    {
-      naem: "barang1",
-      description: "yada yada yada yada",
-      imgUrl: "http://nakertrans.sumbarprov.go.id/images/noimage.jpg",
-      price: 24000,
-    },
-    {
-      naem: "barang2",
-      description: "yada yada yada yada",
-      imgUrl: "http://nakertrans.sumbarprov.go.id/images/noimage.jpg",
-      price: 27000,
-    },
-    {
-      naem: "barang3",
-      description: "yada yada yada yada",
-      imgUrl: "http://nakertrans.sumbarprov.go.id/images/noimage.jpg",
-      price: 124000,
-    },
-  ];
+  const { data, loading, error, removeFromKeranjang } = useGetKeranjang();
 
   const onChangeQuantity = (value: number, index: number) => {
-    refTotal.current[index].innerHTML = (data[index].price * value).toLocaleString("id-ID", { style: "currency", currency: "IDR" });
+    refTotal.current[index].innerHTML = (data.data[index].barang.price * value).toLocaleString("id-ID", { style: "currency", currency: "IDR" });
   };
 
-  const onCheck = (value: boolean, index: number) => {
-    if (value) {
-      setTotal(total + data[index].price * refQuantity.current[index].value);
-    } else {
-      setTotal(total - data[index].price * refQuantity.current[index].value);
-    }
+  const totalHargaHandler = () => {
+    let tesTotal = 0;
+    refTotal.current.forEach((el, index) => {
+      let formatText = el.innerText.replace(/\./g, "").split(",")[0] + "." + el.innerText.replace(/\./g, "").split(",")[1];
+      let harga = parseFloat(formatText.slice(3));
+
+      if (refCheck.current[index].checked) tesTotal += harga;
+    });
+    setTotal(tesTotal);
   };
 
-  //rp.replace(".","").split(",")[0].slice(3)
+  const deletHandler = (id: string, index: number) => {
+    removeFromKeranjang(id);
+    data.data.splice(index, 1);
+    setRerender(!reRender);
+  };
 
   return (
     <>
@@ -66,27 +57,27 @@ const Keranjang = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((val, index) => {
+            {data.data.map(({ id, barang }, index) => {
               return (
                 <tr key={index}>
                   <td>
-                    <input type="checkbox" onClick={(val) => onCheck(val.currentTarget.checked, index)} ref={(el) => (refCheck.current[index] = el)} />
+                    <input type="checkbox" onClick={totalHargaHandler} ref={(el) => (refCheck.current[index] = el)} />
                   </td>
                   <td>
                     <div className="row">
                       <div className="col-4">
-                        <img src={val.imgUrl} className="img-fluid rounded-start" alt={val.naem} />
+                        <img src={barang.image} className="img-fluid rounded-start" alt={barang.name} />
                       </div>
                       <div className="col-8">
                         <div className="card-body">
-                          <h5 className="card-title">{val.naem}</h5>
-                          <p className="card-text">{val.description} ...</p>
+                          <h5 className="card-title">{barang.name}</h5>
+                          <p className="card-text">{barang.description} ...</p>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="text-center">
-                    <p>{val.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</p>
+                    <p>{barang.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</p>
                   </td>
                   <td className="text-center">
                     <input
@@ -97,7 +88,7 @@ const Keranjang = () => {
                       max={99}
                       onChange={(e) => {
                         onChangeQuantity(parseInt(e.currentTarget.value), index);
-                        if (refCheck.current[index].checked) onCheck(true, index);
+                        totalHargaHandler();
                       }}
                       ref={(el) => (refQuantity.current[index] = el)}
                       style={{ width: 65 }}
@@ -105,12 +96,12 @@ const Keranjang = () => {
                   </td>
                   <td className="text-center">
                     <p>
-                      <span ref={(el) => (refTotal.current[index] = el)}>{val.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</span>
+                      <span ref={(el) => (refTotal.current[index] = el)}>{barang.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</span>
                     </p>
                   </td>
                   <td className="text-center">
                     <OverlayTrigger overlay={<Tooltip>Hapus</Tooltip>}>
-                      <Button size="sm" variant="danger" onClick={() => console.log("hapus")}>
+                      <Button size="sm" variant="danger" onClick={() => deletHandler(barang.id, index)}>
                         <i className="fas fa-times" />
                       </Button>
                     </OverlayTrigger>
@@ -121,7 +112,7 @@ const Keranjang = () => {
           </tbody>
         </Table>
         <h3>
-          Total Yang harus dibayar: <span>{total}</span>
+          Total Yang harus dibayar: <span>{total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</span>
         </h3>
       </Container>
     </>

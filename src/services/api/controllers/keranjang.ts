@@ -27,6 +27,11 @@ export const getKeranjang = async (req: Request, res: Response) => {
       where: {
         userId: req.decoded.userId,
       },
+      include: [
+        {
+          model: barang,
+        },
+      ],
     });
 
     res.status(200).send({ info: { limit, offset, total }, data });

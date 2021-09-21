@@ -6,7 +6,7 @@ import { FloatingLabel, Button, Form, Spinner } from "react-bootstrap";
 
 import { useAuth } from "../context";
 import { emailOrUsername } from "../utils";
-import LoginWraper from "../components/LoginWraper";
+import LoginWraper from "../components/loginWraper";
 
 import css from "../styles/login.module.css";
 

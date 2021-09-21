@@ -3,7 +3,7 @@ import Joi from "joi";
 import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 
-import { TOKEN_LIFE, TOKEN_SECREAT } from "../helpers/utils";
+import { TOKEN_LIFE, TOKEN_SECREAT } from "../helpers/constant";
 import { user } from "../data/models";
 
 type payload = { userId: string; username: string; email: string };
@@ -28,7 +28,7 @@ const verifyToken = (token: string): decodeToken => {
       data,
       message: "success",
     };
-  } catch (err) {
+  } catch (err: any) {
     return {
       data: null,
       message: err.message,

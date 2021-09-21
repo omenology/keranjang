@@ -9,11 +9,7 @@ export const DOCUMENTS_DIR = path.join(APP_DIR, "storage/documents");
 
 const storageImage = multer.diskStorage({
   filename: (req, file, cb) => {
-    const filename =
-      file.fieldname +
-      new Date().getTime() +
-      "." +
-      mime.extension(file.mimetype);
+    const filename = file.fieldname + new Date().getTime() + "." + mime.extension(file.mimetype);
     cb(null, filename);
   },
   destination: (req, file, cb) => {
@@ -24,11 +20,7 @@ const storageImage = multer.diskStorage({
 
 const storageDocument = multer.diskStorage({
   filename: (req, file, cb) => {
-    const filename =
-      file.fieldname +
-      new Date().getTime() +
-      "." +
-      mime.extension(file.mimetype);
+    const filename = file.fieldname + new Date().getTime() + "." + mime.extension(file.mimetype);
     cb(null, filename);
   },
   destination: (req, file, cb) => {
@@ -39,8 +31,9 @@ const storageDocument = multer.diskStorage({
 
 export const midUploadImage = multer({
   storage: storageImage,
-  limits: { fileSize: 5242880, files: 5 },
+  //limits: { fileSize: 5242880, files: 5 },
 });
+
 export const midUploadDocument = multer({
   storage: storageDocument,
   limits: { fileSize: 15728640, files: 2 },

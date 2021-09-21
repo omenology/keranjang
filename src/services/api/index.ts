@@ -3,13 +3,13 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
 
-import { sequelize } from "./helpers/connection";
 import routes from "./routes";
-import { syncModels } from "./helpers/utils";
+import { syncModels, cronTask, morganMiddleware } from "./helpers/utils";
 
-// todo
+// checkout, histori, filter get
 // morgan log
 // corn job
+// swager
 
 const app: Express = express();
 
@@ -27,12 +27,18 @@ app.use(express.urlencoded({ extended: false }));
 // helmet
 app.use(helmet()); // Default setting -> DNS prefetching, clickjacking, hide Power By, HSTS, X-Download-Options IE8+, sniffing MIME Type, XSS Protection
 
+// logger
+app.use(morganMiddleware);
+
 // routes enrty
 app.use("/", routes);
 // route not found
 app.use("*", (req, res) => {
   res.status(404).send("Endpoint Not Found");
 });
+
+// cron job
+cronTask.start();
 
 /* Server initialization */
 const host: any = process.env.HOST || "localhost"; // hostname
@@ -44,11 +50,3 @@ const port: any = process.env.PORT || 4000; // used port
 app.listen(port, host, () => {
   console.log(`Service start on host : ${host} and port : ${port}`);
 });
-
-// connection
-//   .authenticate()
-//   .then(() => {
-//   })
-//   .catch((reason) => {
-//     console.log(reason);
-//   });

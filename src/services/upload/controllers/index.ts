@@ -10,10 +10,11 @@ export const uploadImage = async (req: Request, res: Response) => {
   try {
     const dataFile = await modelFile.create({
       fileName: req?.file?.filename,
-      url: "http://localhost:4000/images/" + req?.file?.filename,
+      url: "http://localhost:4004/images/" + req?.file?.filename,
     });
     res.status(200).send({ succes: true, dataFile });
   } catch (error) {
+    console.log(error);
     res.status(500);
   }
 };
