@@ -2,7 +2,7 @@ import cron from "node-cron";
 import { createLogger, format, transports } from "winston";
 import "winston-daily-rotate-file";
 import morgan from "morgan";
-import { user, barang, keranjang } from "../data/models";
+import { user, barang, keranjang, checkout } from "../data/models";
 import { LOG_DIR } from "./constant";
 
 // sync db with model
@@ -10,6 +10,7 @@ export const syncModels = async () => {
   await user.sync({ force: true });
   await barang.sync({ force: true });
   await keranjang.sync({ force: true });
+  await checkout.sync({ force: true });
 };
 
 export const cronTask = cron.schedule("* * 1 * * *", () => {
