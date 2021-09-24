@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
+import { Error } from "sequelize/types";
 
 import { user } from "../data/models";
 
@@ -32,7 +33,7 @@ export const createUser = async (req: Request, res: Response) => {
       ...body.value,
     });
     return res.status(200).send({ data });
-  } catch (error) {
+  } catch (error: any) {
     if (error.original.code == 23505) return res.status(400).send({ message: error.original.detail });
 
     console.log(error);
