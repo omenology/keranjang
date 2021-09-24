@@ -7,11 +7,8 @@ import { checkout } from "../data/models";
 const bodySchema = Joi.object({
   items: Joi.array().items(Joi.string().guid()).default([]),
   totalPayment: Joi.number().required(),
-  user: Joi.object({
-    username: Joi.string(),
-    email: Joi.string().email(),
-  }).required(),
   shippingAddress: Joi.string().required(),
+  reciver: Joi.string().required(),
 }).options({ stripUnknown: true });
 
 export const addToCheckout = async (req: Request, res: Response) => {
@@ -21,6 +18,10 @@ export const addToCheckout = async (req: Request, res: Response) => {
 
     const data = await checkout.create({
       ...body.value,
+      user: {
+        username: req.decoded.username,
+        email: req.decoded.email,
+      },
     });
     res.status(200).send({ data });
   } catch (error) {

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
+import { Op } from "sequelize";
 
 import { barang } from "../data/models";
 
@@ -15,7 +16,24 @@ export const getAllBarang = async (req: Request, res: Response) => {
   try {
     const { value: limit } = Joi.number().default(10).validate(req.query.limit);
     const { value: offset } = Joi.number().default(0).validate(req.query.offset);
-    const { rows: data, count: total } = await barang.findAndCountAll({ limit, offset });
+    const { value: items, error: itemsError } = Joi.array().items(Joi.string().guid()).default([]).validate(req.body.items);
+    if (itemsError) return res.status(400).send({ message: itemsError.message });
+
+    let con = null;
+    if (items.length != 0) {
+      con = {
+        id: {
+          [Op.in]: items,
+        },
+      };
+    }
+    const { rows: data, count: total } = await barang.findAndCountAll({
+      limit,
+      offset,
+      where: {
+        ...con,
+      },
+    });
 
     res.status(200).send({ info: { limit, offset, total }, data });
   } catch (error) {

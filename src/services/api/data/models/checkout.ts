@@ -25,6 +25,10 @@ export default sequelize.define(
     shippingAddress: {
       type: DataTypes.TEXT,
     },
+    reciver: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     tableName: "checkout",
