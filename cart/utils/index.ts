@@ -1,8 +1,9 @@
 import Axios from "axios";
+import localforage from "localforage";
 
 export { emailOrUsername, axios };
-export { useGetBarang } from "./barang";
-export { useGetKeranjang } from "./keranjang";
+export { useBarang } from "./barang";
+export { useKeranjang } from "./keranjang";
 
 export type { infoType, errorType, loadingType };
 export type { dataBarangType, dataBarangArrType } from "./barang";

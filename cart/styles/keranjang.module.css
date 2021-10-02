@@ -1,0 +1,7 @@
+.errMsg {
+  position: absolute;
+  text-align: right;
+  padding-right: 35px;
+  font-size: 9px;
+  top: 33%;
+}

@@ -13,11 +13,11 @@ type GlobalContextType = {
 export const GlobalContext = createContext<GlobalContextType>(undefined);
 
 export const GlobalProvider = ({ children }) => {
-  const [stateLogin, dispatchLogin] = useReducer(reducerAuth, initialStateAuth);
+  const [stateAuth, dispatchAuth] = useReducer(reducerAuth, initialStateAuth);
 
   const value = {
-    state: { auth: stateLogin },
-    dispatch: { auth: dispatchLogin },
+    state: { auth: stateAuth },
+    dispatch: { auth: dispatchAuth },
   };
 
   return <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>;

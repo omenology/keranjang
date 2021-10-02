@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { Error } from "sequelize/types";
+import { logger } from "src/helpers/utils";
 
 import { user } from "../data/models";
 
@@ -19,7 +19,18 @@ export const getAllUser = async (req: Request, res: Response) => {
 
     res.status(200).send({ info: { limit, offset, total }, data });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
+    res.sendStatus(500);
+  }
+};
+
+export const getMyself = async (req: Request, res: Response) => {
+  try {
+    const data = await user.findByPk(req.decoded.userId);
+    if (!data) return res.status(204).send({ message: "data not found" });
+    return res.status(200).send({ data });
+  } catch (error) {
+    logger.error(error);
     res.sendStatus(500);
   }
 };
@@ -34,16 +45,17 @@ export const createUser = async (req: Request, res: Response) => {
     });
     return res.status(200).send({ data });
   } catch (error: any) {
-    if (error.original.code == 23505) return res.status(400).send({ message: error.original.detail });
-
-    console.log(error);
+    if (error.errors) return res.status(400).send({ message: error.errors[0].message });
+    logger.error(error);
     res.sendStatus(500);
   }
 };
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const id = Joi.string().guid().validate(req.params.id);
+    const id = Joi.string()
+      .guid()
+      .validate(req.params.id || req.decoded.userId);
     const body = bodySchema.validate(req.body);
 
     if (id.error) return res.status(400).send({ message: "id fortmat is not valid" });

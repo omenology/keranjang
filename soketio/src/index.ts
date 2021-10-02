@@ -1,6 +1,11 @@
-import { Server } from "socket.io";
-
+import { Server, Socket } from "socket.io";
 import http from "http";
+
+import { verifyToken, decodeToken, payload } from "@jwt/index";
+
+interface ISocket extends Socket {
+  decoded?: decodeToken;
+}
 
 const server = http.createServer();
 const io = new Server(server, {
@@ -9,31 +14,37 @@ const io = new Server(server, {
   },
 });
 
-let ids = new Set();
-let num = 0;
+const onlineUsers = new Set();
 
-io.on("connection", (socket) => {
-  console.log(socket.handshake.auth);
-  socket.on("connected", (evn: any) => {
-    ids.add(evn);
-    let a = Array.from(ids);
-    console.log(a);
-    socket.broadcast.emit("ids", { ids: a, num: num++ });
-  });
+io.use((socket: ISocket, next) => {
+  const token = socket.handshake.auth.token as string;
+  const decodedToken = verifyToken(token);
+  if (!decodedToken.data) next(new Error("unauthorized"));
+  socket.decoded = decodedToken;
+  next();
+});
 
-  socket.on("disconnected", (evn: any) => {
-    if (ids.delete(evn)) {
-      let a = Array.from(ids);
-      console.log(a);
-      socket.broadcast.emit("ids", { ids: a, num: num++ });
+io.on("connection", (socket: ISocket) => {
+  if (socket.decoded?.data) {
+    const { userId, username } = socket.decoded?.data as payload;
+    console.log(username);
+    onlineUsers.add(`${userId} ${username}`);
+    io.emit("onlineUsers", Array.from(onlineUsers));
+
+    socket.on(userId, (eventId: string, msg: string) => {
+      io.emit(eventId, msg);
+    });
+  }
+
+  socket.on("disconnected", (user: string) => {
+    if (onlineUsers.delete(user)) {
+      io.emit("onlineUsers", Array.from(onlineUsers));
+      socket.removeAllListeners(user.split(" ")[0]);
+      socket.disconnect(true);
     }
-  });
-
-  socket.on("idweb1", (id, msg) => {
-    console.log(id, msg);
   });
 });
 
-server.listen(3000, () => {
-  console.log("listening on 3000");
+server.listen(4001, () => {
+  console.log("listening on 4001");
 });

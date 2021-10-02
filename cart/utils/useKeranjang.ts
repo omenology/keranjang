@@ -12,7 +12,14 @@ type stateKeranjang = {
   info: infoType;
 };
 
-export const useGetKeranjang = () => {
+type payloadCheckout = {
+  items: string[];
+  totalPayment: number;
+  reciver: string;
+  shippingAddress: string;
+};
+
+export const useKeranjang = () => {
   const { state } = useAuth();
   const [data, setData] = useState<stateKeranjang>({
     data: [],
@@ -28,34 +35,23 @@ export const useGetKeranjang = () => {
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true);
-        const res = await axios.get("/keranjang", {
-          headers: {
-            Authorization: `Bearer ${state.token}`,
-          },
-        });
-        setLoading(false);
-        setData(res.data);
+        if (state.token) {
+          setLoading(true);
+          const res = await axios.get("/keranjang", {
+            headers: {
+              Authorization: `Bearer ${state.token}`,
+            },
+          });
+          setLoading(false);
+          setData(res.data);
+        }
       } catch (error) {
         setLoading(false);
         if (error.response) setError(`${error.response.status} ${error.response.statusText}`);
         setError("something went wrong");
       }
     })();
-  }, []);
-
-  const addToKeranjang = async (id: string) => {
-    try {
-      const response = await axios.post(`/keranjang/${id}`, null, {
-        headers: {
-          Authorization: `Bearer ${state.token}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.log(error.response);
-    }
-  };
+  }, [state.token]);
 
   const removeFromKeranjang = async (id: string) => {
     try {
@@ -69,5 +65,18 @@ export const useGetKeranjang = () => {
     }
   };
 
-  return { data, loading, error, addToKeranjang, removeFromKeranjang };
+  const checkout = async (payload: payloadCheckout) => {
+    try {
+      const response = await axios.post(`/checkout/`, payload, {
+        headers: {
+          Authorization: `Bearer ${state.token}`,
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  return { data, loading, error, removeFromKeranjang, checkout };
 };

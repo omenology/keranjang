@@ -1,23 +1,19 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
-import { useGetBarang } from "../utils";
+import { useBarang } from "../utils";
 
-import { Button, OverlayTrigger, Tooltip, Modal, Form } from "react-bootstrap";
-import css from "../styles/main.module.css";
+import { Button, OverlayTrigger, Tooltip, Modal, Form, Card } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Items from "../components/items";
 import Container from "../components/container";
+import css from "../styles/main.module.css";
 
 const Index = () => {
   const [modalShow, setModalShow] = useState(false);
   const [newData, setNewData] = useState(null);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const { addBarang } = useGetBarang();
+  const { register, handleSubmit } = useForm();
+  const { addBarang } = useBarang();
 
   const modalOpenHandler = () => setModalShow(true);
   const modalCloseHandler = () => setModalShow(false);

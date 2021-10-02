@@ -14,6 +14,7 @@
     "sequelize-cli": "^6.2.0",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
+    "tsconfig-paths": "^3.11.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"
   },
@@ -36,8 +37,9 @@
   "description": "api cart latihan ",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.ts",
-    "build": "tsc -p ."
+    "dev": "nodemon -r tsconfig-paths/register src/index.ts",
+    "start": "node -r tsconfig-paths/register dist/api/src/index.js",
+    "build": ".src/tsc -p ."
   },
   "keywords": [
     "api",

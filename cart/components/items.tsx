@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 
-import { useGetBarang } from "../utils";
+import { useBarang } from "../utils";
 import Item from "./item";
 
 const Items = (props) => {
-  const { data, info, loading, error, setQuery, setData } = useGetBarang();
+  const { data, info, loading, error, addToKeranjang, setQuery, setData } = useBarang();
 
-  console.log(data);
   useEffect(() => {
     if (props.newData) {
       setData(data.concat(props.newData));
@@ -16,7 +15,7 @@ const Items = (props) => {
   return (
     <div className="row">
       {data.map((val, index) => {
-        return <Item key={index} data={val} />;
+        return <Item key={index} data={val} addToKeranjang={addToKeranjang} />;
       })}
 
       <input

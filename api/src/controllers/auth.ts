@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
-import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 
-import { TOKEN_LIFE, TOKEN_SECREAT } from "../helpers/constant";
+import { generateToken, verifyToken } from "@jwt/index";
 import { user } from "../data/models";
 
 type payload = { userId: string; username: string; email: string };
@@ -16,25 +15,6 @@ declare global {
     }
   }
 }
-
-const generateToken = (payload: payload): string => {
-  return jwt.sign(payload, TOKEN_SECREAT, { expiresIn: `${TOKEN_LIFE}h` });
-};
-
-const verifyToken = (token: string): decodeToken => {
-  try {
-    const data = jwt.verify(token, TOKEN_SECREAT) as payload;
-    return {
-      data,
-      message: "success",
-    };
-  } catch (err: any) {
-    return {
-      data: null,
-      message: err.message,
-    };
-  }
-};
 
 export const isAuth = async (req: Request, res: Response, next: NextFunction) => {
   try {

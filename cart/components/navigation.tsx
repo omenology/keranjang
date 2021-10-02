@@ -4,15 +4,12 @@ import { useRouter } from "next/router";
 import { Dropdown } from "react-bootstrap";
 import { useAuth } from "../context";
 import css from "../styles/main.module.css";
+import Chat from "./chat";
 
 const Navigation = ({ children }) => {
   const navEl = useRef(null);
   const router = useRouter();
-  const { state, logout } = useAuth();
-
-  useEffect(() => {
-    if (!state.token) router.push("/login");
-  }, [state.token]);
+  const { logout } = useAuth();
 
   const clickHandler = (e: BaseSyntheticEvent) => {
     for (const el of navEl.current.children) {
@@ -30,7 +27,7 @@ const Navigation = ({ children }) => {
         <div className={`p-2`}>
           <ul ref={navEl} className="nav justify-content-center">
             <li
-              className={`nav-item ${css.navBtn} ${css.active}`}
+              className={`nav-item ${css.navBtn} ${router.pathname == "/" ? css.active : ""}`}
               onClick={(e) => {
                 clickHandler(e);
                 router.push("/");
@@ -39,7 +36,7 @@ const Navigation = ({ children }) => {
               <span className="nav-link">Beranda</span>
             </li>
             <li
-              className={`nav-item ${css.navBtn}`}
+              className={`nav-item ${css.navBtn} ${router.pathname == "/keranjang" ? css.active : ""}`}
               onClick={(e) => {
                 clickHandler(e);
                 router.push("/keranjang");
@@ -48,7 +45,7 @@ const Navigation = ({ children }) => {
               <span className="nav-link">Keranjang</span>
             </li>
             <li
-              className={`nav-item ${css.navBtn}`}
+              className={`nav-item ${css.navBtn} ${router.pathname == "/riwayat" ? css.active : ""}`}
               onClick={(e) => {
                 clickHandler(e);
                 router.push("/riwayat");
@@ -63,7 +60,7 @@ const Navigation = ({ children }) => {
             <Dropdown.Toggle className={`${css.ddBtn}`} variant="link">
               <i className="fas fa-ellipsis-h" />
             </Dropdown.Toggle>
-            <Dropdown.Menu>
+            <Dropdown.Menu style={{ zIndex: 1030 }}>
               <Dropdown.Item>
                 <i className="fas fa-user-circle" /> Profile
               </Dropdown.Item>
@@ -75,6 +72,7 @@ const Navigation = ({ children }) => {
         </div>
       </div>
       {children}
+      <Chat />
     </React.Fragment>
   );
 };

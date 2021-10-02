@@ -2,8 +2,9 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { FloatingLabel, Button, Form } from "react-bootstrap";
+import { FloatingLabel, Button, Form, Spinner } from "react-bootstrap";
 
+import { useAuth } from "../context";
 import LoginWraper from "../components/loginWraper";
 
 import css from "../styles/login.module.css";
@@ -16,9 +17,11 @@ const Register = (props) => {
     getValues,
   } = useForm();
   const router = useRouter();
+  const { register: registerUser, state } = useAuth();
 
   const onSubmit = (data): void => {
     console.log(data);
+    registerUser(data);
   };
 
   const isEmail = (str: string): boolean => {
@@ -93,7 +96,7 @@ const Register = (props) => {
         </div>
         <div className="d-grid gap-2">
           <Button type="submit" size="lg" variant="dark" style={{ borderRadius: "0 0 15px 15px" }}>
-            SUBMIT
+            {state.loading ? <Spinner animation="border" variant="light" /> : "SUBMIT"}
           </Button>
         </div>
       </form>

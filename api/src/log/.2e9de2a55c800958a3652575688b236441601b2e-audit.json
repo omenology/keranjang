@@ -1,0 +1,159 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\.2e9de2a55c800958a3652575688b236441601b2e-audit.json",
+    "files": [
+        {
+            "date": 1632547330360,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-25-12.log",
+            "hash": "d04e3d9cac797b24568bfe47a65b0d2e"
+        },
+        {
+            "date": 1632553060297,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-25-13.log",
+            "hash": "0e2a27ee350b45a259ed31137da57a66"
+        },
+        {
+            "date": 1632553243921,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-25-14.log",
+            "hash": "898c84e66081aa5a98f15d6b101e2025"
+        },
+        {
+            "date": 1632643283697,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-26-15.log",
+            "hash": "59100334694e3218784ad92bc63ec286"
+        },
+        {
+            "date": 1632727019619,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-27-14.log",
+            "hash": "4b1469713355e12f83d76d3227ede53d"
+        },
+        {
+            "date": 1632730701067,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-27-15.log",
+            "hash": "8e442babbf6ad69776c9a2fcc964adfa"
+        },
+        {
+            "date": 1632814262584,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-28-14.log",
+            "hash": "74de541f9818038541dced2648c2f7f7"
+        },
+        {
+            "date": 1632816008619,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-28-15.log",
+            "hash": "c0466f779362d181d19c83846fc2a9d4"
+        },
+        {
+            "date": 1632820419989,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-28-16.log",
+            "hash": "8610a25acb5bc66f0f6bb037a9f1d373"
+        },
+        {
+            "date": 1632823255843,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-28-17.log",
+            "hash": "ef74fc5fac571d948a901bebc4535e71"
+        },
+        {
+            "date": 1632896136863,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-29-13.log",
+            "hash": "ff7b7c450fbe96476e68f9ba2a08f239"
+        },
+        {
+            "date": 1632907290753,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-29-16.log",
+            "hash": "d9672177bb310cba30853844690456d3"
+        },
+        {
+            "date": 1632922588146,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-29-20.log",
+            "hash": "c7f19b8cdf2fd617cd2f4adb05a4188d"
+        },
+        {
+            "date": 1632924726978,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-29-21.log",
+            "hash": "c592fafcc7ceec3939fec6db0b316cdb"
+        },
+        {
+            "date": 1632981901943,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-30-13.log",
+            "hash": "e869c011132f50eb94b43bfed744677b"
+        },
+        {
+            "date": 1632985315477,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-30-14.log",
+            "hash": "ae5b34befc46123d03bd8f32c94a0e63"
+        },
+        {
+            "date": 1632993479470,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-30-16.log",
+            "hash": "9aa61442eb12faa4a56cac17e5f43104"
+        },
+        {
+            "date": 1632998280984,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-30-17.log",
+            "hash": "9b4e5bbe8892b2d8a2cf4b489395a590"
+        },
+        {
+            "date": 1632999750090,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-30-18.log",
+            "hash": "88709394f17a70ab0b0677397bf5e8a4"
+        },
+        {
+            "date": 1633003466922,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-09-30-19.log",
+            "hash": "ebd41a08d6e5884fdb73d25e04274edb"
+        },
+        {
+            "date": 1633068632560,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-01-13.log",
+            "hash": "3d4c0524c65e5aaa081aa830f7e4faa4"
+        },
+        {
+            "date": 1633072199580,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-01-14.log",
+            "hash": "3fc919722cb7e272d87e6d8efb0957c7"
+        },
+        {
+            "date": 1633075489052,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-01-15.log",
+            "hash": "18b4f9d545fa6918c2164333be1f3591"
+        },
+        {
+            "date": 1633079329756,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-01-16.log",
+            "hash": "bee28791d87c0cbde2c4a518a7c724d1"
+        },
+        {
+            "date": 1633082411535,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-01-17.log",
+            "hash": "cd382ad667fe452dae2be2ce1307aa38"
+        },
+        {
+            "date": 1633091945113,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-01-19.log",
+            "hash": "a424493c2df76db5c2f3b9f23ec17892"
+        },
+        {
+            "date": 1633094133875,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-01-20.log",
+            "hash": "88b43c3eb223f10a628dd04a66cb14ab"
+        },
+        {
+            "date": 1633154856985,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-02-13.log",
+            "hash": "245d50725eec8f3029b7dbafd61b7d0b"
+        },
+        {
+            "date": 1633159359890,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-02-14.log",
+            "hash": "d2abcaa888988bed56845afda8b13ae5"
+        },
+        {
+            "date": 1633165982647,
+            "name": "C:\\Users\\omn\\Documents\\cart\\api\\src\\log\\api-2021-10-02-16.log",
+            "hash": "e648e41a8da8217ce399abc61d0103ec"
+        }
+    ]
+}

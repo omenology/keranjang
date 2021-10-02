@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { useAuth } from "../context";
 import { axios, errorType, infoType, loadingType } from ".";
 
 export type dataBarangType = {
@@ -11,25 +11,31 @@ export type dataBarangType = {
 };
 
 export type dataBarangArrType = dataBarangType[];
-type queryType = object;
 
-export const useGetBarang = () => {
+export const useBarang = () => {
+  const { state } = useAuth();
   const [data, setData] = useState<dataBarangArrType>([]);
   const [info, setInfo] = useState<infoType>(null);
   const [loading, setLoading] = useState<loadingType>(false);
   const [error, setError] = useState<errorType>(false);
   const [query, setQuery] = useState({ limit: "10" });
-  const [reRender, setRerender] = useState(false);
-
+  console.log("useBarang");
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true);
-        const res = await axios.get(`/barang/?${new URLSearchParams(query).toString()}`);
-        setData(res.data.data);
-        setInfo(res.data.info);
-        setLoading(false);
-        if (error) setError(false);
+        if (state.token) {
+          setLoading(true);
+          const res = await axios.get(`/barang/?${new URLSearchParams(query).toString()}`, {
+            headers: {
+              Authorization: `Bearer ${state.token}`,
+            },
+          });
+
+          setData(res.data.data);
+          setInfo(res.data.info);
+          setLoading(false);
+          if (error) setError(false);
+        }
       } catch (error) {
         setLoading(false);
         if (data.length != 0) setData([]);
@@ -38,7 +44,7 @@ export const useGetBarang = () => {
         setError("something went wrong");
       }
     })();
-  }, [query]);
+  }, [query, state.token]);
 
   const addBarang = async (payload: { name: string; description?: string; price?: any; image?: string | null }) => {
     payload.price = parseInt(payload.price);
@@ -51,5 +57,18 @@ export const useGetBarang = () => {
     }
   };
 
-  return { data, info, loading, error, addBarang, setData, setQuery };
+  const addToKeranjang = async (id: string) => {
+    try {
+      const response = await axios.post(`/keranjang/${id}`, null, {
+        headers: {
+          Authorization: `Bearer ${state.token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  return { data, info, loading, error, addBarang, addToKeranjang, setData, setQuery };
 };

@@ -1,12 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { useGetKeranjang } from "../utils";
+import { useKeranjang } from "../utils";
 
 import Head from "next/head";
-import { Table, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Table, Button, OverlayTrigger, Tooltip, FloatingLabel, Form, Card } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
-import { stringify } from "querystring";
+
+import css from "../styles/keranjang.module.css";
 
 const Keranjang = () => {
   const refTotal = useRef([]);
@@ -14,8 +16,12 @@ const Keranjang = () => {
   const refCheck = useRef([]);
   const [total, setTotal] = useState(0);
   const [reRender, setRerender] = useState(true);
-
-  const { data, loading, error, removeFromKeranjang } = useGetKeranjang();
+  const { data, loading, error, removeFromKeranjang, checkout } = useKeranjang();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const onChangeQuantity = (value: number, index: number) => {
     refTotal.current[index].innerHTML = (data.data[index].barang.price * value).toLocaleString("id-ID", { style: "currency", currency: "IDR" });
@@ -37,6 +43,22 @@ const Keranjang = () => {
     data.data.splice(index, 1);
     setRerender(!reRender);
   };
+
+  const onSubmit = (dataForm: { reciver: string; shippingAddress: string }): void => {
+    const payload = {
+      items: [],
+      totalPayment: total,
+      ...dataForm,
+    };
+
+    refCheck.current.forEach((val, index) => {
+      if (val.checked) payload.items.push(data.data[index].id);
+    });
+    console.log(payload);
+    checkout(payload);
+  };
+
+  const styleMsgErr = { position: "absolute", textAlign: "right", paddingRight: 35, fontSize: 9, top: "33%" };
 
   return (
     <>
@@ -111,9 +133,36 @@ const Keranjang = () => {
             })}
           </tbody>
         </Table>
-        <h3>
-          Total Yang harus dibayar: <span>{total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</span>
-        </h3>
+        <Card>
+          <Card.Body>
+            <div className="row">
+              <div className="col">
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                  <FloatingLabel label="Penerima" className="mb-2">
+                    <Form.Control type="text" {...register("reciver", { required: true })} isInvalid={errors?.reciver} placeholder="Penerima" />
+                    <Form.Control.Feedback type="invalid" className={`${css.errMsg}`}>
+                      Penerima tidak boleh kosong
+                    </Form.Control.Feedback>
+                  </FloatingLabel>
+                  <FloatingLabel label="Alatam Penerima" className="mb-2">
+                    <Form.Control as="textarea" {...register("shippingAddress", { required: true })} isInvalid={errors?.shippingAddress} placeholder="Alatam Penerima" style={{ height: 100 }} />
+                    <Form.Control.Feedback type="invalid" className={`${css.errMsg}`} style={{ top: 8 }}>
+                      Alamat penerima tidak boleh kosong
+                    </Form.Control.Feedback>
+                  </FloatingLabel>
+                  <Button disabled={total == 0} type="submit">
+                    Checkout
+                  </Button>
+                </Form>
+              </div>
+              <div className="col">
+                <h4 className="text-end">
+                  Total Yang harus dibayar: <span>{total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</span>
+                </h4>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
       </Container>
     </>
   );
