@@ -3,7 +3,7 @@ import { useAuth } from "../context";
 
 const Wrapper = (props) => {
   const { isLogin } = useAuth();
-  console.log("ada wraper");
+
   React.useEffect(() => {
     isLogin();
   }, []);

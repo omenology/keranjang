@@ -7,12 +7,12 @@ type props = {
   data: dataBarangType;
   addToKeranjang: Function;
 };
-let num = 0;
+
 const Item = ({ data, addToKeranjang }: props) => {
   const addToCartHandler = (id: string): void => {
     addToKeranjang(id);
   };
-  console.log(num++, "item");
+
   return (
     <div className="col-6 col-md-3 p-1">
       <div className="card">

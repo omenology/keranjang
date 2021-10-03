@@ -83,6 +83,9 @@ typings/
 dist/
 dist
 
+log/
+log
+
 
 # Gatsby files
 .cache/

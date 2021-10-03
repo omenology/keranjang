@@ -19,7 +19,7 @@ export const useBarang = () => {
   const [loading, setLoading] = useState<loadingType>(false);
   const [error, setError] = useState<errorType>(false);
   const [query, setQuery] = useState({ limit: "10" });
-  console.log("useBarang");
+
   useEffect(() => {
     (async () => {
       try {

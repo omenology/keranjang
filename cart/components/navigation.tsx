@@ -57,7 +57,7 @@ const Navigation = ({ children }) => {
         </div>
         <div className="d-flex align-items-center justify-content-center pe-3">
           <Dropdown>
-            <Dropdown.Toggle className={`${css.ddBtn}`} variant="link">
+            <Dropdown.Toggle id="dropdown-basic" className={`${css.ddBtn}`} variant="link">
               <i className="fas fa-ellipsis-h" />
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ zIndex: 1030 }}>

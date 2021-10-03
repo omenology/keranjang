@@ -2,11 +2,12 @@ import Axios from "axios";
 import localforage from "localforage";
 
 export { emailOrUsername, axios };
-export { useBarang } from "./barang";
-export { useKeranjang } from "./keranjang";
+export { useBarang } from "./useBarang";
+export { useKeranjang } from "./useKeranjang";
+export { useLocalForage } from "./useLocalForage";
 
 export type { infoType, errorType, loadingType };
-export type { dataBarangType, dataBarangArrType } from "./barang";
+export type { dataBarangType, dataBarangArrType } from "./useBarang";
 
 const emailOrUsername = (str: string): { email?: string; username?: string } => {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(str)) {

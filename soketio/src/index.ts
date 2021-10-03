@@ -31,8 +31,8 @@ io.on("connection", (socket: ISocket) => {
     onlineUsers.add(`${userId} ${username}`);
     io.emit("onlineUsers", Array.from(onlineUsers));
 
-    socket.on(userId, (eventId: string, msg: string) => {
-      io.emit(eventId, msg);
+    socket.on(userId, (eventId: string, message: string) => {
+      io.emit(eventId, { userId, message });
     });
   }
 
