@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Card, Button, Form, Spinner } from "react-bootstrap";
-import { io, Socket } from "socket.io-client";
+import { Card, Button, Form } from "react-bootstrap";
 
 import { useAuth } from "../context";
-import { useLocalForage } from "../utils";
+import { useLocalForage, useSocket } from "../utils";
 
 import css from "../styles/chat.module.css";
 
@@ -11,48 +10,33 @@ interface IChatMsg {
   me?: string;
   him?: string;
 }
-
+interface argsSocketType {
+  userId: string;
+  message: string;
+}
 const Chat = () => {
   const { state } = useAuth();
   const { instance } = useLocalForage();
-  const refText = useRef(null);
-  const refChatBox = useRef(null);
-  const [socket, setSocket] = useState<Socket>(null);
-  const [onlineUser, setOnlineUser] = useState<string[]>([]);
+  const { socket, onlineUser } = useSocket();
   const [[TIdUser, TUsername], setTarget] = useState<string[]>([]);
   const [showChat, setShowChat] = useState<boolean>(false);
   const [showListChat, setShowListChat] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (state.token) {
-      let initSocket = io("http://localhost:4001/", {
-        auth: {
-          token: state.token,
-        },
-      });
-
-      initSocket.on("onlineUsers", (data) => {
-        setOnlineUser(data);
-      });
-      setSocket(initSocket);
-    }
-  }, [state.token]);
+  const [himMsg, setHimMsg] = useState<argsSocketType>({ userId: "", message: "" });
+  const refText = useRef(null);
+  const refChatBox = useRef(null);
 
   useEffect(() => {
     if (socket && state.user?.id) {
-      socket.on(state.user?.id, async (data: { userId: string; message: string }) => {
-        const messages: IChatMsg[] = (await instance.getItem(`${state.user?.id} ${data.userId}`)) || [];
-        messages.push({ him: data.message });
-        await instance.setItem(`${state.user?.id} ${data.userId}`, messages);
-
-        appendChild(true, data.message);
+      socket.on(state.user?.id, async (data: argsSocketType) => {
+        updateLocalMsg(true, data.userId, data.message);
+        setHimMsg(data);
       });
-      return () => {
-        socket.off("onlineUsers");
-        socket.emit("disconnected", `${state.user.id} ${state.user.username}`);
-      };
     }
   }, [socket, state.user]);
+
+  useEffect(() => {
+    if (TIdUser == himMsg.userId) appendChild(true, himMsg.message);
+  }, [himMsg]);
 
   const clickOnlineUsersHandler = async (target: string[]) => {
     refChatBox.current.textContent = "";
@@ -61,21 +45,10 @@ const Chat = () => {
     populateChat(`${state.user.id} ${target[0]}`);
   };
 
-  // instance.keys((err, keys) => {
-  //   console.log(keys);
-  //   keys.forEach((val) => {
-  //     console.log(val);
-  //     if (val != "token") instance.removeItem(val);
-  //   });
-  // });
-
   const sendHandler = async () => {
-    const messages: IChatMsg[] = (await instance.getItem(`${state.user?.id} ${TIdUser}`)) || [];
-    messages.push({ me: refText.current.value });
-    await instance.setItem(`${state.user?.id} ${TIdUser}`, messages);
-
-    socket.emit(state.user?.id, TIdUser, refText.current.value);
+    updateLocalMsg(false, TIdUser, refText.current.value);
     appendChild(false, refText.current.value);
+    socket.emit(state.user?.id, TIdUser, refText.current.value);
     refText.current.value = "";
   };
 
@@ -84,6 +57,12 @@ const Chat = () => {
     messages.forEach((val) => {
       appendChild(val?.him ? true : false, val.me || val.him);
     });
+  };
+
+  const updateLocalMsg = async (him: boolean, TargetUserId: string, msg: string) => {
+    const localMsg: IChatMsg[] = (await instance.getItem(`${state.user.id} ${TargetUserId}`)) || [];
+    localMsg.push({ [him ? "him" : "me"]: msg });
+    await instance.setItem(`${state.user?.id} ${TargetUserId}`, localMsg);
   };
 
   const appendChild = (him: boolean, msg: string) => {

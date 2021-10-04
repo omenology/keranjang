@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
@@ -9,7 +10,8 @@ import Items from "../components/items";
 import Container from "../components/container";
 import css from "../styles/main.module.css";
 
-const Index = () => {
+const Index = ({ tes }) => {
+  console.log(tes);
   const [modalShow, setModalShow] = useState(false);
   const [newData, setNewData] = useState(null);
   const { register, handleSubmit } = useForm();
@@ -68,5 +70,11 @@ const Index = () => {
 };
 
 Index.navigation = Navigation;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: { tes: "asd" },
+  };
+};
 
 export default Index;

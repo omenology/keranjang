@@ -5,6 +5,7 @@ export { emailOrUsername, axios };
 export { useBarang } from "./useBarang";
 export { useKeranjang } from "./useKeranjang";
 export { useLocalForage } from "./useLocalForage";
+export { useSocket } from "./useSocket";
 
 export type { infoType, errorType, loadingType };
 export type { dataBarangType, dataBarangArrType } from "./useBarang";
