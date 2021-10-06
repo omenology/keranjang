@@ -20,21 +20,25 @@ export const cronTask = cron.schedule("* * 1 * * *", () => {
 export const logger = createLogger({
   level: "debug",
   format: format.combine(
+    process.env.NODE_ENV === "production" ? format.uncolorize() : format.colorize(),
     format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
     format.printf(({ timestamp, level, message }) => `${timestamp} ${level} ${message}`)
   ),
-  transports: [
-    new transports.Console(),
+});
+
+if (process.env.NODE_ENV === "production") {
+  logger.add(
     new transports.DailyRotateFile({
       filename: "api-%DATE%.log",
       datePattern: "YYYY-MM-DD-HH",
       dirname: LOG_DIR,
       maxSize: "10m",
       maxFiles: "14d",
-    }),
-  ],
-});
-
+    })
+  );
+} else {
+  logger.add(new transports.Console());
+}
 export const morganMiddleware = morgan(":method :url HTTP/:http-version :status :response-time ms - :res[content-length] :user-agent", {
   stream: {
     write: (msg: string) => logger.http(msg),

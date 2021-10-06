@@ -1,10 +1,10 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
 
-import { verifyToken, decodeToken, payload } from "@jwt/index";
+import { verifyToken, verifyTokenPromise, decodeToken, payload } from "@jwt/index";
 
 interface ISocket extends Socket {
-  decoded?: decodeToken;
+  decoded?: payload;
 }
 
 const server = http.createServer();
@@ -16,18 +16,25 @@ const io = new Server(server, {
 
 const onlineUsers = new Set();
 
-io.use((socket: ISocket, next) => {
-  const token = socket.handshake.auth.token as string;
-  const decodedToken = verifyToken(token);
-  if (!decodedToken.data) next(new Error("unauthorized"));
-  socket.decoded = decodedToken;
-  next();
+io.use(async (socket: ISocket, next) => {
+  // const token = socket.handshake.auth.token as string;
+  // const decodedToken = verifyToken(token);
+  // if (!decodedToken.data) next(new Error("unauthorized"));
+  // socket.decoded = decodedToken;
+  try {
+    const token = socket.handshake.auth.token as string;
+    const decodedToken = await verifyTokenPromise(token);
+    socket.decoded = decodedToken;
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
 });
 
 io.on("connection", (socket: ISocket) => {
-  if (socket.decoded?.data) {
-    const { userId, username } = socket.decoded?.data as payload;
-    console.log(username);
+  if (socket.decoded) {
+    const { userId, username } = socket?.decoded;
+
     onlineUsers.add(`${userId} ${username}`);
     io.emit("onlineUsers", Array.from(onlineUsers));
 

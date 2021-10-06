@@ -16,7 +16,7 @@ const Keranjang = () => {
   const refCheck = useRef([]);
   const [total, setTotal] = useState(0);
   const [reRender, setRerender] = useState(true);
-  const { data, loading, error, removeFromKeranjang, checkout } = useKeranjang();
+  const { data, loading, error, removeFromKeranjang } = useKeranjang();
   const {
     register,
     handleSubmit,
@@ -55,10 +55,7 @@ const Keranjang = () => {
       if (val.checked) payload.items.push(data.data[index].id);
     });
     console.log(payload);
-    checkout(payload);
   };
-
-  const styleMsgErr = { position: "absolute", textAlign: "right", paddingRight: 35, fontSize: 9, top: "33%" };
 
   return (
     <>

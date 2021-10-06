@@ -75,8 +75,8 @@ const Chat = () => {
   };
 
   return (
-    <div className={`d-flex flex-row-reverse align-items-end ${css.container}`}>
-      <Card className={`${css.listChat} ${showListChat ? css.listChatOpen : css.listChatHide}`}>
+    <div className={`d-flex flex-row-reverse align-items-end ${css.container} ${showListChat ? css.listChatOpen : css.listChatHide}`}>
+      <Card className={`${css.listChat} `}>
         <Card.Header>Online Users</Card.Header>
         <Card.Body className="overflow-auto">
           <ul className="list-group list-group-flush">
@@ -95,15 +95,13 @@ const Chat = () => {
           <i className={`fas fa-angle-${showListChat ? "right" : "left"}`} style={{ marginLeft: -2 }} />
         </Button>
       </Card>
-      <Card style={{ height: "50%", minHeight: 290, width: 350, display: showChat ? "" : "none" }}>
+      <Card className={`${css.cardChatBox}`} style={{ display: showChat ? "" : "none" }}>
         <Card.Header className="d-flex justify-content-between">
           <h5 className="m-0">{TUsername}</h5>
           <i onClick={() => setShowChat(false)} className="fas fa-times align-self-center" style={{ cursor: "pointer" }} />
         </Card.Header>
         <Card.Body>
-          <div ref={refChatBox} className={`overflow-auto mb-2 pe-1 ${css.chatBox}`}>
-            {/* <Spinner animation="border" variant="primary" className={`${css.loadingChat}`} />  */}
-          </div>
+          <div ref={refChatBox} className={`overflow-auto mb-2 pe-1 ${css.chatBox}`}></div>
           <div className="d-flex justify-content-between" style={{ position: "absolute", bottom: 9, width: "91%" }}>
             <Form.Control onKeyDown={(e) => (e.key == "Enter" ? sendHandler() : null)} ref={refText} type="text" placeholder="Message" className="me-2" />
             <Button onClick={sendHandler} className="btn btn-primary btn-sm">

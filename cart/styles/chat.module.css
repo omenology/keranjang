@@ -4,6 +4,7 @@
   top: 58px;
   right: 0;
   height: calc(100% - 58px);
+  transition: ease 300ms;
 }
 
 .chat > p {
@@ -30,6 +31,12 @@
   left: -27px;
 }
 
+.cardChatBox {
+  height: 50%;
+  min-height: 290px;
+  width: 350px;
+}
+
 .chatBox {
   height: 180px;
 }
@@ -52,7 +59,6 @@
 .listChat {
   width: 250px;
   height: 100%;
-  transition: ease 300ms;
 }
 
 .listChatHide {

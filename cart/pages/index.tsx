@@ -11,7 +11,6 @@ import Container from "../components/container";
 import css from "../styles/main.module.css";
 
 const Index = ({ tes }) => {
-  console.log(tes);
   const [modalShow, setModalShow] = useState(false);
   const [newData, setNewData] = useState(null);
   const { register, handleSubmit } = useForm();

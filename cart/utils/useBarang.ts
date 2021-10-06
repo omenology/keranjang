@@ -50,7 +50,11 @@ export const useBarang = () => {
     payload.price = parseInt(payload.price);
     if (payload.image == "") delete payload.image;
     try {
-      const respones = await axios.post("http://localhost:4000/barang/", payload);
+      const respones = await axios.post("http://localhost:4000/barang/", payload, {
+        headers: {
+          Authorization: `Bearer ${state.token}`,
+        },
+      });
       return respones.data;
     } catch (error) {
       console.log(error.response);
