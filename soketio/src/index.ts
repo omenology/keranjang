@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
 
-import { verifyToken, verifyTokenPromise, decodeToken, payload } from "@jwt/index";
+import { verifyToken, decodeToken, payload } from "@jwt/index";
 
 interface ISocket extends Socket {
   decoded?: payload;
@@ -17,18 +17,11 @@ const io = new Server(server, {
 const onlineUsers = new Set();
 
 io.use(async (socket: ISocket, next) => {
-  // const token = socket.handshake.auth.token as string;
-  // const decodedToken = verifyToken(token);
-  // if (!decodedToken.data) next(new Error("unauthorized"));
-  // socket.decoded = decodedToken;
-  try {
-    const token = socket.handshake.auth.token as string;
-    const decodedToken = await verifyTokenPromise(token);
-    socket.decoded = decodedToken;
-    next();
-  } catch (error) {
-    next(error as Error);
-  }
+  const token = socket.handshake.auth.token as string;
+  const decoded = verifyToken(token);
+  if (decoded.error) next(decoded.error.cause);
+  socket.decoded = decoded.data as payload;
+  next();
 });
 
 io.on("connection", (socket: ISocket) => {

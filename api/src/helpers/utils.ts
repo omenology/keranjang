@@ -1,7 +1,7 @@
 import cron from "node-cron";
+import morgan from "morgan";
 import { createLogger, format, transports } from "winston";
 import "winston-daily-rotate-file";
-import morgan from "morgan";
 import { user, barang, keranjang, checkout } from "../data/models";
 import { LOG_DIR } from "./constant";
 
@@ -39,8 +39,24 @@ if (process.env.NODE_ENV === "production") {
 } else {
   logger.add(new transports.Console());
 }
+
 export const morganMiddleware = morgan(":method :url HTTP/:http-version :status :response-time ms - :res[content-length] :user-agent", {
   stream: {
     write: (msg: string) => logger.http(msg),
   },
 });
+type additonalDataErrType =
+  | {
+      code?: number;
+      [key: string]: any;
+    }
+  | undefined;
+
+export class CError extends Error {
+  public custom: additonalDataErrType;
+
+  constructor(message: string, custom?: additonalDataErrType) {
+    super(message);
+    this.custom = custom;
+  }
+}

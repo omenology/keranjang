@@ -2,11 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import { Op } from "sequelize";
 
-import { generateToken, verifyToken } from "@jwt/index";
+import { generateToken, verifyToken, payload } from "@jwt/index";
 import { user } from "../data/models";
-
-type payload = { userId: string; username: string; email: string };
-type decodeToken = { data: payload | null; message: string };
+import { CError, logger } from "src/helpers/utils";
 
 declare global {
   namespace Express {
@@ -19,19 +17,19 @@ declare global {
 export const isAuth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authorization = req.header("authorization");
-    if (!authorization) return res.status(401).send({ message: "unauthorization" });
+    if (!authorization) throw new CError("unauthorization", { code: 401 });
 
     const [type, token] = authorization?.split(" ");
-    if (!type || !token) return res.status(401).send({ message: "unauthorization" });
+    if (!type || !token) throw new CError("unauthorization", { code: 401 });
+    const decoded = verifyToken(token);
+    if (decoded.error) throw new CError(decoded.error.message, { code: 401 });
 
-    const { data, message } = verifyToken(token);
-    if (!data) return res.status(401).send({ message });
-
-    req.decoded = data;
+    req.decoded = decoded.data as payload;
     next();
-  } catch (error) {
-    console.log(error);
-    res.sendStatus(500);
+  } catch (err: any) {
+    const error: CError = err;
+    logger.error(error);
+    res.status(error.custom?.code || 500).send({ message: error.message });
   }
 };
 
@@ -44,7 +42,7 @@ export const login = async (req: Request, res: Response) => {
     })
       .xor("email", "username")
       .validate(req.body);
-    if (body.error) return res.status(400).send({ message: body.error.message });
+    if (body.error) throw new CError(body.error.message, { dd: 5 });
 
     const data = await user.findOne({
       where: {
@@ -52,14 +50,15 @@ export const login = async (req: Request, res: Response) => {
         password: body.value.password,
       },
     });
-    if (!data) if (!data) return res.status(401).send({ message: "email, username or password was wrong" });
+    if (!data) throw new CError(`${body.value.email ? "email" : "username"} or password was wrong`, { code: 401 });
 
     const { id, email, username } = data?.get();
     const token = generateToken({ email, username, userId: id });
 
     return res.status(200).send({ data: { token } });
-  } catch (error) {
-    console.log(error);
-    res.sendStatus(500);
+  } catch (err: any) {
+    const error: CError = err;
+    logger.error(error);
+    res.status(error.custom?.code || 500).send({ message: error.message });
   }
 };

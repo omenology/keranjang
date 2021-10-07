@@ -3,6 +3,7 @@ import Joi from "joi";
 import { Op } from "sequelize";
 
 import { barang } from "../data/models";
+import { logger, CError } from "src/helpers/utils";
 
 // validation body request
 const bodySchema = Joi.object({
@@ -17,7 +18,7 @@ export const getAllBarang = async (req: Request, res: Response) => {
     const { value: limit } = Joi.number().default(10).validate(req.query.limit);
     const { value: offset } = Joi.number().default(0).validate(req.query.offset);
     const { value: items, error: itemsError } = Joi.array().items(Joi.string().guid()).default([]).validate(req.body.items);
-    if (itemsError) return res.status(400).send({ message: itemsError.message });
+    if (itemsError) throw new CError(itemsError.message, { code: 400 });
 
     let con = null;
     if (items.length != 0) {
@@ -36,23 +37,26 @@ export const getAllBarang = async (req: Request, res: Response) => {
     });
 
     res.status(200).send({ info: { limit, offset, total }, data });
-  } catch (error) {
-    console.log(error);
-    res.sendStatus(500);
+  } catch (err: any) {
+    const error: CError = err;
+    logger.error(error);
+    res.status(error.custom?.code || 500).send({ message: error.message });
   }
 };
 
 export const createBarang = async (req: Request, res: Response) => {
   try {
     const body = bodySchema.validate(req.body);
-    if (body.error) return res.status(400).send({ message: body.error.message });
+    if (body.error) throw new CError(body.error.message, { code: 400 });
+
     const data = await barang.create({
       ...body.value,
     });
     res.status(200).send({ data });
-  } catch (error) {
-    console.log(error);
-    res.sendStatus(500);
+  } catch (err: any) {
+    const error: CError = err;
+    logger.error(error);
+    res.status(error.custom?.code || 500).send({ message: error.message });
   }
 };
 
@@ -61,33 +65,36 @@ export const updateBarang = async (req: Request, res: Response) => {
     const id = Joi.string().guid().validate(req.params.id);
     const body = bodySchema.validate(req.body);
 
-    if (id.error) return res.status(400).send({ message: "id fortmat is not valid" });
-    if (body.error) return res.status(400).send({ message: body.error.message });
+    if (id.error) throw new CError("id fortmat is not valid", { code: 400 });
+
+    if (body.error) throw new CError(body.error.message, { code: 400 });
 
     const data = await barang.findByPk(id.value);
-    if (!data) return res.status(204).send({ message: "data not found" });
+    if (!data) throw new CError("data not found", { code: 204 });
 
     data?.set(body.value);
     data?.save();
     return res.status(200).send({ data });
-  } catch (error) {
-    console.log(error);
-    res.sendStatus(500);
+  } catch (err: any) {
+    const error: CError = err;
+    logger.error(error);
+    res.status(error.custom?.code || 500).send({ message: error.message });
   }
 };
 
 export const deleteBarang = async (req: Request, res: Response) => {
   try {
     const id = Joi.string().guid().validate(req.params.id);
-    if (id.error) return res.status(400).send({ message: "id fortmat is not valid" });
+    if (id.error) throw new CError("id fortmat is not valid", { code: 400 });
 
     const data = await barang.findByPk(id.value);
-    if (!data) return res.status(204).send({ message: "data not found" });
+    if (!data) throw new CError("data not found", { code: 204 });
 
     data?.destroy();
     return res.status(200).send({ data });
-  } catch (error) {
-    console.log(error);
-    res.sendStatus(500);
+  } catch (err: any) {
+    const error: CError = err;
+    logger.error(error);
+    res.status(error.custom?.code || 500).send({ message: error.message });
   }
 };
