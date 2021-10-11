@@ -19,7 +19,7 @@ const onlineUsers = new Set();
 io.use(async (socket: ISocket, next) => {
   const token = socket.handshake.auth.token as string;
   const decoded = verifyToken(token);
-  if (decoded.error) next(decoded.error.cause);
+  if (decoded.error) next(decoded.error);
   socket.decoded = decoded.data as payload;
   next();
 });

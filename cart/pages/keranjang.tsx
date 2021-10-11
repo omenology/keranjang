@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 
 import { useKeranjang } from "../utils";
 
@@ -22,6 +23,7 @@ const Keranjang = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const router = useRouter();
 
   const onChangeQuantity = (value: number, index: number) => {
     refTotal.current[index].innerHTML = (data.data[index].barang.price * value).toLocaleString("id-ID", { style: "currency", currency: "IDR" });
@@ -53,6 +55,13 @@ const Keranjang = () => {
 
     refCheck.current.forEach((val, index) => {
       if (val.checked) payload.items.push(data.data[index].id);
+    });
+
+    router.push({
+      pathname: "/checkout",
+      query: {
+        data: JSON.stringify(payload),
+      },
     });
     console.log(payload);
   };

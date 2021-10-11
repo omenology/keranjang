@@ -2,8 +2,10 @@ import jwt from "jsonwebtoken";
 
 import { TOKEN_SECREAT, TOKEN_LIFE } from "./helpers/constants";
 
+export const awt = jwt;
+
 export type payload = { userId: string; username: string; email: string };
-export type decodeToken = { data?: payload; error?: { message: string; cause: Error } };
+export type decodeToken = { data?: payload; error?: Error };
 
 export const generateToken = (payload: payload): string => {
   return jwt.sign(payload, TOKEN_SECREAT, { expiresIn: `${TOKEN_LIFE}h` });
@@ -17,10 +19,7 @@ export const verifyToken = (token: string): decodeToken => {
     };
   } catch (err: any) {
     return {
-      error: {
-        message: err.message,
-        cause: err,
-      },
+      error: err,
     };
   }
 };

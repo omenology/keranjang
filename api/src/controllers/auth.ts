@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import { Op } from "sequelize";
+import httpError, { HttpError } from "http-errors";
 
 import { generateToken, verifyToken, payload } from "@jwt/index";
 import { user } from "../data/models";
-import { CError, logger } from "src/helpers/utils";
+import { logger } from "../helpers/utils";
 
 declare global {
   namespace Express {
@@ -16,20 +17,21 @@ declare global {
 
 export const isAuth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authorization = req.header("authorization");
-    if (!authorization) throw new CError("unauthorization", { code: 401 });
+    const authorization = req.headers.authorization || req.header("Authorization");
+
+    if (!authorization) throw httpError(401);
 
     const [type, token] = authorization?.split(" ");
-    if (!type || !token) throw new CError("unauthorization", { code: 401 });
+    if (!type || !token) throw httpError(401);
     const decoded = verifyToken(token);
-    if (decoded.error) throw new CError(decoded.error.message, { code: 401 });
+    if (decoded.error) throw httpError(401, decoded.error);
 
     req.decoded = decoded.data as payload;
     next();
   } catch (err: any) {
-    const error: CError = err;
+    const error: HttpError = err;
     logger.error(error);
-    res.status(error.custom?.code || 500).send({ message: error.message });
+    res.status(error.statusCode || 500).send({ message: error.message });
   }
 };
 
@@ -42,7 +44,7 @@ export const login = async (req: Request, res: Response) => {
     })
       .xor("email", "username")
       .validate(req.body);
-    if (body.error) throw new CError(body.error.message, { dd: 5 });
+    if (body.error) throw httpError(400, body.error);
 
     const data = await user.findOne({
       where: {
@@ -50,15 +52,15 @@ export const login = async (req: Request, res: Response) => {
         password: body.value.password,
       },
     });
-    if (!data) throw new CError(`${body.value.email ? "email" : "username"} or password was wrong`, { code: 401 });
+    if (!data) throw httpError(401, `${body.value.email ? "email" : "username"} or password was wrong`);
 
     const { id, email, username } = data?.get();
     const token = generateToken({ email, username, userId: id });
 
     return res.status(200).send({ data: { token } });
   } catch (err: any) {
-    const error: CError = err;
+    const error: HttpError = err;
     logger.error(error);
-    res.status(error.custom?.code || 500).send({ message: error.message });
+    res.status(error.statusCode || 500).send({ message: error.message });
   }
 };
