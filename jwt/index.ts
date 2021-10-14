@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 import { TOKEN_SECREAT, TOKEN_LIFE } from "./helpers/constants";
 
-export const awt = jwt;
+export const jsonwebtoken = jwt;
 
 export type payload = { userId: string; username: string; email: string };
 export type decodeToken = { data?: payload; error?: Error };

@@ -1,4 +1,19 @@
+import { BuildOptions, Model } from "sequelize/types";
 import { sequelize, DataTypes } from "../../helpers/connection";
+
+interface barangAttributes extends Model {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+type BarangStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): barangAttributes;
+};
 
 export default sequelize.define(
   "barang",
@@ -51,4 +66,4 @@ export default sequelize.define(
       },
     },
   }
-);
+) as BarangStatic;

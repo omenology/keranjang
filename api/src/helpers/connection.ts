@@ -1,4 +1,4 @@
-import mongose from "mongoose";
+// import mongose from "mongoose";
 import { Sequelize, DataTypes as TypeData } from "sequelize";
 
 // export default mongose.connect("mongodb://root:password@localhost:27017", {

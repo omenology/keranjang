@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { CError, logger } from "src/helpers/utils";
+import httpError, { HttpError } from "http-errors";
 
+import { logger } from "src/helpers/utils";
 import { keranjang, barang } from "../data/models";
 
 export const addToKeranjang = async (req: Request, res: Response) => {
   try {
     const idBarang = Joi.string().guid().validate(req.params.id);
-    if (idBarang.error) throw new CError("id fortmat is not valid", { code: 400 });
+    if (idBarang.error) throw httpError(400, "id fortmat is not valid");
 
     const data = await keranjang.create({
       userId: req.decoded.userId,
@@ -15,9 +16,9 @@ export const addToKeranjang = async (req: Request, res: Response) => {
     });
     return res.status(200).send({ data });
   } catch (err: any) {
-    const error: CError = err;
+    const error: HttpError = err;
     logger.error(error);
-    res.status(error.custom?.code || 500).send({ message: error.message });
+    res.status(error.statusCode || 500).send({ message: error.message });
   }
 };
 
@@ -38,16 +39,16 @@ export const getKeranjang = async (req: Request, res: Response) => {
 
     res.status(200).send({ info: { limit, offset, total }, data });
   } catch (err: any) {
-    const error: CError = err;
+    const error: HttpError = err;
     logger.error(error);
-    res.status(error.custom?.code || 500).send({ message: error.message });
+    res.status(error.statusCode || 500).send({ message: error.message });
   }
 };
 
 export const deletBarangFromKeranjang = async (req: Request, res: Response) => {
   try {
     const idBarang = Joi.string().guid().validate(req.params.id);
-    if (idBarang.error) throw new CError("id fortmat is not valid", { code: 400 });
+    if (idBarang.error) throw httpError(400, "id fortmat is not valid");
 
     const data = await keranjang.destroy({
       where: {
@@ -56,11 +57,11 @@ export const deletBarangFromKeranjang = async (req: Request, res: Response) => {
       },
     });
 
-    if (data === 0) throw new CError("data not found", { code: 204 });
+    if (data === 0) return res.sendStatus(204);
     return res.status(200).send({ data });
   } catch (err: any) {
-    const error: CError = err;
+    const error: HttpError = err;
     logger.error(error);
-    res.status(error.custom?.code || 500).send({ message: error.message });
+    res.status(error.statusCode || 500).send({ message: error.message });
   }
 };

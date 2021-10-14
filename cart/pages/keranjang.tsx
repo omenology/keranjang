@@ -54,7 +54,11 @@ const Keranjang = () => {
     };
 
     refCheck.current.forEach((val, index) => {
-      if (val.checked) payload.items.push(data.data[index].id);
+      if (val.checked)
+        payload.items.push({
+          barangId: data.data[index].id,
+          quantity: parseInt(refQuantity.current[index].value),
+        });
     });
 
     router.push({

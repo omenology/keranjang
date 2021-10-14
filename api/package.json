@@ -32,6 +32,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.3",
     "@types/node-cron": "^2.0.4",
+    "@types/nodemailer": "^6.4.4",
     "@types/sequelize": "^4.28.10",
     "@types/supertest": "^2.0.11",
     "@types/swagger-jsdoc": "^6.0.1",
@@ -52,7 +53,7 @@
     "dev": "cross-env NODE_ENV=development nodemon -r tsconfig-paths/register src/index.ts",
     "start": "node -r tsconfig-paths/register dist/api/src/index.js",
     "build": ".src/tsc -p .",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll "
   },
   "keywords": [
     "api",

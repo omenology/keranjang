@@ -9,7 +9,6 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Wrapper from "../components/wrapper";
 
 function MyApp({ Component, pageProps }) {
-  console.log(Component.navigation);
   const Navigation = Component.navigation || (({ children }) => <>{children}</>);
   NProgress.configure({ showSpinner: false });
 
