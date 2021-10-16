@@ -1,10 +1,7 @@
-import Axios from "axios";
-
-export { emailOrUsername, axios, tryJsonParse };
+export { emailOrUsername, tryJsonParse };
 export { useBarang } from "./useBarang";
 export { useKeranjang } from "./useKeranjang";
 export { useLocalForage } from "./useLocalForage";
-export { useSocket } from "./useSocket";
 
 export type { infoType, errorType, loadingType, dataCheckoutType };
 export type { dataBarangType, dataBarangArrType } from "./useBarang";
@@ -32,8 +29,6 @@ const emailOrUsername = (str: string): { email?: string; username?: string } => 
   }
   return { username: str };
 };
-
-const axios = Axios.create({ baseURL: "http://localhost:4000" });
 
 const tryJsonParse = (jsonStringify: string): dataCheckoutType | boolean => {
   try {

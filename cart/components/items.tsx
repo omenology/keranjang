@@ -22,7 +22,7 @@ const Items = (props) => {
         type="number"
         defaultValue={10}
         onChange={(val) => {
-          setQuery({ limit: val.currentTarget.value });
+          setQuery({ limit: val.currentTarget.value || "1" });
         }}
       />
     </div>

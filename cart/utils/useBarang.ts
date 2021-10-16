@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context";
-import { axios, errorType, infoType, loadingType } from ".";
+import { errorType, infoType, loadingType } from ".";
+import { useUtils } from "../context/actions/utils";
 
 export type dataBarangType = {
   id: string;
@@ -13,7 +13,7 @@ export type dataBarangType = {
 export type dataBarangArrType = dataBarangType[];
 
 export const useBarang = () => {
-  const { state } = useAuth();
+  const { state: utils } = useUtils();
   const [data, setData] = useState<dataBarangArrType>([]);
   const [info, setInfo] = useState<infoType>(null);
   const [loading, setLoading] = useState<loadingType>(false);
@@ -23,19 +23,15 @@ export const useBarang = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (state.token) {
-          setLoading(true);
-          const res = await axios.get(`/barang/?${new URLSearchParams(query).toString()}`, {
-            headers: {
-              Authorization: `Bearer ${state.token}`,
-            },
-          });
+        setLoading(true);
+        const res = await utils.axios.get(`/barang/`, {
+          params: query,
+        });
 
-          setData(res.data.data);
-          setInfo(res.data.info);
-          setLoading(false);
-          if (error) setError(false);
-        }
+        setData(res.data.data);
+        setInfo(res.data.info);
+        setLoading(false);
+        if (error) setError(false);
       } catch (error) {
         setLoading(false);
         if (data.length != 0) setData([]);
@@ -44,17 +40,13 @@ export const useBarang = () => {
         setError("something went wrong");
       }
     })();
-  }, [query, state.token]);
+  }, [query]);
 
   const addBarang = async (payload: { name: string; description?: string; price?: any; image?: string | null }) => {
     payload.price = parseInt(payload.price);
     if (payload.image == "") delete payload.image;
     try {
-      const respones = await axios.post("http://localhost:4000/barang/", payload, {
-        headers: {
-          Authorization: `Bearer ${state.token}`,
-        },
-      });
+      const respones = await utils.axios.post("http://localhost:4000/barang/", payload);
       return respones.data;
     } catch (error) {
       console.log(error.response);
@@ -63,11 +55,7 @@ export const useBarang = () => {
 
   const addToKeranjang = async (id: string) => {
     try {
-      const response = await axios.post(`/keranjang/${id}`, null, {
-        headers: {
-          Authorization: `Bearer ${state.token}`,
-        },
-      });
+      const response = await utils.axios.post(`/keranjang/${id}`);
       return response.data;
     } catch (error) {
       console.log(error.response);

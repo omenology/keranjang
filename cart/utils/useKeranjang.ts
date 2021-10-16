@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { axios, dataBarangType, errorType, infoType, loadingType } from ".";
-import { useAuth } from "../context";
+import { dataBarangType, errorType, infoType, loadingType } from ".";
+import { useUtils } from "../context/actions/utils";
 
 type stateKeranjang = {
   data: {
@@ -20,7 +20,7 @@ type payloadCheckout = {
 };
 
 export const useKeranjang = () => {
-  const { state } = useAuth();
+  const { state: utils } = useUtils();
   const [data, setData] = useState<stateKeranjang>({
     data: [],
     info: {
@@ -35,31 +35,21 @@ export const useKeranjang = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (state.token) {
-          setLoading(true);
-          const res = await axios.get("/keranjang", {
-            headers: {
-              Authorization: `Bearer ${state.token}`,
-            },
-          });
-          setLoading(false);
-          setData(res.data);
-        }
+        setLoading(true);
+        const res = await utils.axios.get("/keranjang");
+        setLoading(false);
+        setData(res.data);
       } catch (error) {
         setLoading(false);
         if (error.response) setError(`${error.response.status} ${error.response.statusText}`);
         setError("something went wrong");
       }
     })();
-  }, [state.token]);
+  }, []);
 
   const removeFromKeranjang = async (id: string) => {
     try {
-      const response = await axios.delete(`/keranjang/${id}`, {
-        headers: {
-          Authorization: `Bearer ${state.token}`,
-        },
-      });
+      await utils.axios.delete(`/keranjang/${id}`);
     } catch (error) {
       console.log(error.response);
     }
@@ -67,11 +57,7 @@ export const useKeranjang = () => {
 
   const checkout = async (payload: payloadCheckout) => {
     try {
-      const response = await axios.post(`/checkout/`, payload, {
-        headers: {
-          Authorization: `Bearer ${state.token}`,
-        },
-      });
+      const response = await utils.axios.post(`/checkout/`, payload);
       console.log(response);
     } catch (error) {
       console.log(error.response);

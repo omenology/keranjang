@@ -17,15 +17,24 @@ const bodySchema = Joi.object({
 const limitOffset = Joi.object({
   limit: Joi.number().min(0).default(10),
   offset: Joi.number().min(0).default(0),
+  items: Joi.array().items(Joi.string().guid()).default([]),
 });
+
+const tryJsonParse = (jsonStringify: string) => {
+  try {
+    return JSON.parse(jsonStringify);
+  } catch (error) {}
+  return undefined;
+};
 
 export const getAllBarang = async (req: Request, res: Response) => {
   try {
+    req.query.items = tryJsonParse(req.query?.items as string);
     const query = limitOffset.validate(req.query);
-    const { limit, offset } = query.value;
-    const { value: items, error: itemsErr } = Joi.array().items(Joi.string().guid()).default([]).validate(req.body.items);
-    const errValidation = query.error || itemsErr;
-    if (errValidation) throw httpError(400, errValidation.message);
+    const { limit, offset, items } = query.value;
+
+    if (query.error) throw httpError(400, query.error.message);
+    console.log(items, "items===============");
 
     let con = null;
     if (items.length != 0) {
@@ -42,7 +51,7 @@ export const getAllBarang = async (req: Request, res: Response) => {
         ...con,
       },
     });
-
+    console.log(data, "0000");
     res.status(200).send({ info: { limit, offset, total }, data });
   } catch (err: any) {
     const error: HttpError = err;

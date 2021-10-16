@@ -56,7 +56,7 @@ const Keranjang = () => {
     refCheck.current.forEach((val, index) => {
       if (val.checked)
         payload.items.push({
-          barangId: data.data[index].id,
+          barangId: data.data[index].barang.id,
           quantity: parseInt(refQuantity.current[index].value),
         });
     });
