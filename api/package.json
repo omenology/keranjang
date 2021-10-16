@@ -53,7 +53,7 @@
     "dev": "cross-env NODE_ENV=development nodemon -r tsconfig-paths/register src/index.ts",
     "start": "node -r tsconfig-paths/register dist/api/src/index.js",
     "build": ".src/tsc -p .",
-    "test": "jest --watchAll "
+    "test": "jest --watchAll"
   },
   "keywords": [
     "api",

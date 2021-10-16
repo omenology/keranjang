@@ -12,10 +12,17 @@ const bodySchema = Joi.object({
   password: Joi.string().min(4).max(16).required(),
 }).options({ stripUnknown: true });
 
+const limitOffset = Joi.object({
+  limit: Joi.number().min(0).default(10),
+  offset: Joi.number().min(0).default(0),
+});
+
 export const getAllUser = async (req: Request, res: Response) => {
   try {
-    const { value: limit } = Joi.number().default(10).validate(req.query.limit);
-    const { value: offset } = Joi.number().default(0).validate(req.query.offset);
+    const query = limitOffset.validate(req.query);
+    const { limit, offset } = query.value;
+    if (query.error) throw httpError(400, query.error.message);
+
     const { rows: data, count: total } = await user.findAndCountAll({ limit, offset });
 
     res.status(200).send({ info: { limit, offset, total }, data });

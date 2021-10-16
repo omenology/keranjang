@@ -1,6 +1,6 @@
-import { generateToken, verifyToken, jsonwebtoken as jwt } from "@jwt/index";
 import { Request, Response, NextFunction } from "express";
-import { isAuth } from "../controllers/auth";
+import { generateToken, verifyToken, jsonwebtoken as jwt } from "@jwt/index";
+import { isAuth } from "./auth";
 
 const _jwt = require("@jwt/index");
 
@@ -115,4 +115,10 @@ describe("tes middleware isAuth", () => {
     );
     expect(nextFunction).toBeCalledTimes(1);
   });
+});
+
+describe("controller login", () => {
+  test.todo("body validasi error");
+  test.todo("username email atau password salah");
+  test.todo("login berhasil");
 });

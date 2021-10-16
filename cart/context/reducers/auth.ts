@@ -11,10 +11,9 @@ export type authStateType = {
   loading: boolean;
   error: boolean | string;
 };
-
-const typeAuth = [AUTH_START, LOGIN_SUCCESS, AUTH_FAILD, LOGOUT, REGISTER_SUCCESS] as const;
+const actionTypesAuth = [AUTH_START, LOGIN_SUCCESS, AUTH_FAILD, LOGOUT, REGISTER_SUCCESS] as const;
 export type authActionType = {
-  type: typeof typeAuth[number];
+  type: typeof actionTypesAuth[number];
   token?: string;
   user?: userType;
   error?: string | boolean;

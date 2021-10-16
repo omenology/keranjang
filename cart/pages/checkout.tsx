@@ -2,19 +2,21 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import { tryJsonParse, dataCheckoutType } from "../utils";
+import { tryJsonParse, dataCheckoutType, axios } from "../utils";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
 import { Card, Table } from "react-bootstrap";
 
 const Checkout = (props) => {
-  console.log("1");
   const router = useRouter();
   const data = tryJsonParse(router.query?.data as string) as dataCheckoutType;
   if (!data) router.push("/keranjang");
 
   useEffect(() => {
-    console.log("Rendered", data);
+    console.log(
+      "Rendered",
+      data.items.map((val) => val.barangId)
+    );
   }, []);
 
   return data ? (

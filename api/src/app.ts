@@ -7,7 +7,6 @@ import routes from "./routes";
 import { syncModels, cronTask, morganMiddleware } from "./helpers/utils";
 
 // checkout, histori, filter get
-// morgan log
 // corn job
 // swager
 
@@ -32,6 +31,7 @@ app.use(morganMiddleware);
 
 // routes enrty
 app.use("/", routes);
+
 // route not found
 app.use("*", (req, res) => {
   res.status(404).send("Endpoint Not Found");

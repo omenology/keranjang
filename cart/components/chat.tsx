@@ -5,6 +5,7 @@ import { useAuth } from "../context";
 import { useLocalForage, useSocket } from "../utils";
 
 import css from "../styles/chat.module.css";
+import { useUtils } from "../context/actions/utils";
 
 interface IChatMsg {
   me?: string;
@@ -16,8 +17,11 @@ interface argsSocketType {
 }
 const Chat = () => {
   const { state } = useAuth();
+  const { state: utils } = useUtils();
+  console.log(utils, state);
   const { instance } = useLocalForage();
-  const { socket, onlineUser } = useSocket();
+  // const { socket, onlineUser } = useSocket();
+  const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const [[TIdUser, TUsername], setTarget] = useState<string[]>([]);
   const [showChat, setShowChat] = useState<boolean>(false);
   const [showListChat, setShowListChat] = useState<boolean>(false);
@@ -25,14 +29,24 @@ const Chat = () => {
   const refText = useRef(null);
   const refChatBox = useRef(null);
 
+  // useEffect(() => {
+  //   if (socket && state.user?.id) {
+  //     socket.on(state.user?.id, async (data: argsSocketType) => {
+  //       updateLocalMsg(true, data.userId, data.message);
+  //       setHimMsg(data);
+  //     });
+  //   }
+  // }, [socket, state.user]);
+
   useEffect(() => {
-    if (socket && state.user?.id) {
-      socket.on(state.user?.id, async (data: argsSocketType) => {
-        updateLocalMsg(true, data.userId, data.message);
-        setHimMsg(data);
-      });
-    }
-  }, [socket, state.user]);
+    utils.socketio.on("onlineUsers", (data) => {
+      setOnlineUser(data);
+    });
+    utils.socketio.on(state.user?.id, async (data: argsSocketType) => {
+      updateLocalMsg(true, data.userId, data.message);
+      setHimMsg(data);
+    });
+  }, []);
 
   useEffect(() => {
     if (TIdUser == himMsg.userId) appendChild(true, himMsg.message);
@@ -48,7 +62,7 @@ const Chat = () => {
   const sendHandler = async () => {
     updateLocalMsg(false, TIdUser, refText.current.value);
     appendChild(false, refText.current.value);
-    socket.emit(state.user?.id, TIdUser, refText.current.value);
+    utils.socketio.emit(state.user?.id, TIdUser, refText.current.value);
     refText.current.value = "";
   };
 
