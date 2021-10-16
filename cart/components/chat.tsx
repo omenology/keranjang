@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Card, Button, Form } from "react-bootstrap";
 
 import { useAuth } from "../context";
-import { useLocalForage, useSocket } from "../utils";
+import { useLocalForage } from "../utils";
 
 import css from "../styles/chat.module.css";
 import { useUtils } from "../context/actions/utils";
