@@ -2,8 +2,9 @@ import cron from "node-cron";
 import morgan from "morgan";
 import { createLogger, format, transports } from "winston";
 import "winston-daily-rotate-file";
+import { Snap } from "midtrans-client";
 import { user, barang, keranjang, checkout } from "../data/models";
-import { LOG_DIR } from "./constant";
+import { LOG_DIR, MIDTRANS_CLIENT_KEY, MIDTRANS_SERVER_KEY } from "./constant";
 
 // sync db with model
 export const syncModels = async () => {
@@ -26,6 +27,7 @@ export const logger = createLogger({
   ),
 });
 
+//if (process.env.NODE_ENV === "test") logger.silent = true;
 if (process.env.NODE_ENV === "production") {
   logger.add(
     new transports.DailyRotateFile({
@@ -45,18 +47,9 @@ export const morganMiddleware = morgan(":method :url HTTP/:http-version :status 
     write: (msg: string) => logger.http(msg),
   },
 });
-type additonalDataErrType =
-  | {
-      code?: number;
-      [key: string]: any;
-    }
-  | undefined;
 
-export class CError extends Error {
-  public custom: additonalDataErrType;
-
-  constructor(message: string, custom?: additonalDataErrType) {
-    super(message);
-    this.custom = custom;
-  }
-}
+export const snap = new Snap({
+  isProduction: false,
+  clientKey: MIDTRANS_CLIENT_KEY,
+  serverKey: MIDTRANS_SERVER_KEY,
+});

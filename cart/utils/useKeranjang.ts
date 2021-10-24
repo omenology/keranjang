@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { dataBarangType, errorType, infoType, loadingType } from ".";
-import { useUtils } from "../context/actions/utils";
+import { useUtils } from "../context";
 
 type stateKeranjang = {
   data: {
@@ -20,7 +20,7 @@ type payloadCheckout = {
 };
 
 export const useKeranjang = () => {
-  const { state: utils } = useUtils();
+  const { axios } = useUtils();
   const [data, setData] = useState<stateKeranjang>({
     data: [],
     info: {
@@ -36,7 +36,7 @@ export const useKeranjang = () => {
     (async () => {
       try {
         setLoading(true);
-        const res = await utils.axios.get("/keranjang");
+        const res = await axios.get("/keranjang");
         setLoading(false);
         setData(res.data);
       } catch (error) {
@@ -49,7 +49,7 @@ export const useKeranjang = () => {
 
   const removeFromKeranjang = async (id: string) => {
     try {
-      await utils.axios.delete(`/keranjang/${id}`);
+      await axios.delete(`/keranjang/${id}`);
     } catch (error) {
       console.log(error.response);
     }
@@ -57,7 +57,7 @@ export const useKeranjang = () => {
 
   const checkout = async (payload: payloadCheckout) => {
     try {
-      const response = await utils.axios.post(`/checkout/`, payload);
+      const response = await axios.post(`/checkout/`, payload);
       console.log(response);
     } catch (error) {
       console.log(error.response);

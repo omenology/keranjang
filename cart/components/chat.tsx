@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Card, Button, Form } from "react-bootstrap";
 
-import { useAuth } from "../context";
-import { useLocalForage } from "../utils";
+import { useAuth, useUtils } from "../context";
 
 import css from "../styles/chat.module.css";
-import { useUtils } from "../context/actions/utils";
 
 interface IChatMsg {
   me?: string;
@@ -17,8 +15,7 @@ interface argsSocketType {
 }
 const Chat = () => {
   const { state: authState } = useAuth();
-  const { state: utils } = useUtils();
-  const { instance: localForage } = useLocalForage();
+  const { socketio, localforage } = useUtils();
 
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const [[TIdUser, TUsername], setTarget] = useState<string[]>([]);
@@ -30,10 +27,10 @@ const Chat = () => {
   const refChatBox = useRef(null);
 
   useEffect(() => {
-    utils.socketio.on("onlineUsers", (data) => {
+    socketio.on("onlineUsers", (data) => {
       setOnlineUser(data);
     });
-    utils.socketio.on(authState.user?.id, async (data: argsSocketType) => {
+    socketio.on(authState.user?.id, async (data: argsSocketType) => {
       updateLocalMsg(true, data.userId, data.message);
       setHimMsg(data);
     });
@@ -53,21 +50,21 @@ const Chat = () => {
   const sendHandler = async () => {
     updateLocalMsg(false, TIdUser, refText.current.value);
     appendChild(false, refText.current.value);
-    utils.socketio.emit(authState.user?.id, TIdUser, refText.current.value);
+    socketio.emit(authState.user?.id, TIdUser, refText.current.value);
     refText.current.value = "";
   };
 
   const populateChat = async (key: string) => {
-    const messages: IChatMsg[] = (await localForage.getItem(`${key}`)) || [];
+    const messages: IChatMsg[] = (await localforage.getItem(`${key}`)) || [];
     messages.forEach((val) => {
       appendChild(val?.him ? true : false, val.me || val.him);
     });
   };
 
   const updateLocalMsg = async (him: boolean, TargetUserId: string, msg: string) => {
-    const localMsg: IChatMsg[] = (await localForage.getItem(`${authState.user.id} ${TargetUserId}`)) || [];
+    const localMsg: IChatMsg[] = (await localforage.getItem(`${authState.user.id} ${TargetUserId}`)) || [];
     localMsg.push({ [him ? "him" : "me"]: msg });
-    await localForage.setItem(`${authState.user?.id} ${TargetUserId}`, localMsg);
+    await localforage.setItem(`${authState.user?.id} ${TargetUserId}`, localMsg);
   };
 
   const appendChild = (him: boolean, msg: string) => {

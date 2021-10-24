@@ -1,9 +1,10 @@
-// Library import
-import express, { Express, Request, Response } from "express";
+// // Library import
+import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 
 import connection from "./helpers/connection";
 import route from "./routes";
+import { MulterError } from "multer";
 
 // init app
 const app: Express = express();
@@ -27,11 +28,17 @@ app.use("*", (req: Request, res: Response) => {
   res.status(404).send("Endpoint Not Found");
 });
 
+app.use((err: MulterError, req: Request, res: Response, next: NextFunction) => {
+  if (err?.code) res.status(400).send({ message: err.message });
+  res.status(500).send({ message: err.message });
+});
+
 connection
   .then(() => {
-    app.listen(4004, "localhost");
-    console.log("app listening on localhost:4004");
+    app.listen(4002, "localhost");
+    console.log("app listening on localhost:4002");
   })
   .catch((err) => {
+    console.log("asdasdasdasdassad");
     console.log(err, "error connect to db");
   });

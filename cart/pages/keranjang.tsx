@@ -54,11 +54,26 @@ const Keranjang = () => {
     };
 
     refCheck.current.forEach((val, index) => {
-      if (val.checked)
-        payload.items.push({
-          barangId: data.data[index].barang.id,
-          quantity: parseInt(refQuantity.current[index].value),
-        });
+      if (val.checked) {
+        if (payload.items.length == 0) {
+          payload.items.push({
+            barangId: data.data[index].barang.id,
+            quantity: parseInt(refQuantity.current[index].value),
+          });
+        } else {
+          let hole = payload.items.length;
+          let value = data.data[index].barang.id;
+          while (hole > 0 && (payload.items[hole - 1].barangId as string).localeCompare(value) > 0) {
+            payload.items[hole] = payload.items[hole - 1];
+            hole--;
+          }
+          //payload.items[hole] = value;
+          payload.items[hole] = {
+            barangId: data.data[index].barang.id,
+            quantity: parseInt(refQuantity.current[index].value),
+          };
+        }
+      }
     });
 
     router.push({
@@ -67,7 +82,6 @@ const Keranjang = () => {
         data: JSON.stringify(payload),
       },
     });
-    console.log(payload);
   };
 
   return (

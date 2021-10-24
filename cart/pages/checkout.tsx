@@ -2,27 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import { tryJsonParse, dataCheckoutType } from "../utils";
+import { tryJsonParse, dataCheckoutType, dataBarangType } from "../utils";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
 import { Card, Table } from "react-bootstrap";
-import { useUtils } from "../context/actions/utils";
+import { useUtils } from "../context";
 
 const Checkout = (props) => {
-  const { state: utils } = useUtils();
+  const { axios } = useUtils();
   const router = useRouter();
   const data = tryJsonParse(router.query?.data as string) as dataCheckoutType;
   if (!data) router.push("/keranjang");
 
-  const [barang, setBarang] = useState<object[]>([]);
+  const [barang, setBarang] = useState<dataBarangType[]>([]);
 
   useEffect(() => {
-    console.log(
-      "Rendered",
-      data.items.map((val) => val.barangId)
-    );
+    console.log(data);
 
-    utils.axios
+    axios
       .get("/barang", {
         params: {
           items: JSON.stringify(data.items.map((val) => val.barangId)),
@@ -30,6 +27,7 @@ const Checkout = (props) => {
       })
       .then((val) => {
         console.log(val);
+        setBarang(val.data.data);
       })
       .catch((err) => {
         console.log(err);
@@ -68,6 +66,22 @@ const Checkout = (props) => {
                   <th className="text-center">subTotal</th>
                 </tr>
               </thead>
+              <tbody>
+                {barang.map((val, index) => {
+                  return (
+                    <tr>
+                      <td>gambar prod</td>
+                      <td>
+                        <p className="fw-bold m-0">{val.name}</p>
+                        <p className="m-0">{val.description}</p>
+                      </td>
+                      <td className="text-center">{val.price}</td>
+                      <td className="text-center">{data.items[index].quantity}</td>
+                      <td className="text-center">{val.price * data.items[index].quantity}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </Table>
           </Card.Body>
         </Card>

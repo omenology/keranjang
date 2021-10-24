@@ -86,6 +86,7 @@ dist
 log/
 log
 
+images
 
 # Gatsby files
 .cache/

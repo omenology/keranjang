@@ -6,25 +6,29 @@ const actionTypesUtil = [SET_UTILS, SET_AXIOS, SET_SOCKETIO, RESET_UTILS] as con
 export type utilsStateType = {
   axios: AxiosInstance | null;
   socketio: Socket | null;
+  localforage: LocalForage | null;
 };
 export type utilsActionType = {
   type: typeof actionTypesUtil[number];
-  axiosInstance?: AxiosInstance;
+  axios?: AxiosInstance;
   socketio?: Socket;
+  localforage?: LocalForage;
 };
 
 export const initalStateUtils: utilsStateType = {
   axios: null,
   socketio: null,
+  localforage: null,
 };
 
 export const reducerUtils = (state: utilsStateType, action: utilsActionType) => {
   switch (action.type) {
     case SET_UTILS:
-      return { axios: action.axiosInstance, socketio: action.socketio };
+      delete action.type;
+      return { ...action };
 
     case SET_AXIOS:
-      return { ...state, axios: action.axiosInstance };
+      return { ...state, axios: action.axios };
 
     case SET_SOCKETIO:
       return { ...state, socketio: action.socketio };

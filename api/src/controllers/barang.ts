@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Joi from "joi";
+import Joi, { object } from "joi";
 import { Op } from "sequelize";
 import httpError, { HttpError } from "http-errors";
 
@@ -14,11 +14,26 @@ const bodySchema = Joi.object({
   image: Joi.string().default("https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/ac/20070325222640%21No_image_available.svg/120px-No_image_available.svg.png"),
 }).options({ stripUnknown: true });
 
-const limitOffset = Joi.object({
+const paginationQuery = Joi.object({
   limit: Joi.number().min(0).default(10),
   offset: Joi.number().min(0).default(0),
   items: Joi.array().items(Joi.string().guid()).default([]),
-});
+}).options({ stripUnknown: true });
+
+const orderQuery = Joi.object({
+  id: Joi.string()
+    .uppercase()
+    .empty("")
+    .custom((val) => (val == "DESC" ? "DESC" : "ASC")),
+  name: Joi.string()
+    .uppercase()
+    .empty("")
+    .custom((val) => (val == "DESC" ? "DESC" : "ASC")),
+  price: Joi.string()
+    .uppercase()
+    .empty("")
+    .custom((val) => (val == "DESC" ? "DESC" : "ASC")),
+}).options({ stripUnknown: true });
 
 const tryJsonParse = (jsonStringify: string) => {
   try {
@@ -30,15 +45,16 @@ const tryJsonParse = (jsonStringify: string) => {
 export const getAllBarang = async (req: Request, res: Response) => {
   try {
     req.query.items = tryJsonParse(req.query?.items as string);
-    const query = limitOffset.validate(req.query);
-    const { limit, offset, items } = query.value;
+    const pQueryValidated = paginationQuery.validate(req.query);
+    const { limit, offset, items } = pQueryValidated.value;
+    if (pQueryValidated.error) throw httpError(400, pQueryValidated.error.message);
 
-    if (query.error) throw httpError(400, query.error.message);
-    console.log(items, "items===============");
+    const oQueryValidated = orderQuery.validate(req.query);
+    const order: any[] = Object.keys(oQueryValidated.value).map((val) => [val, oQueryValidated.value[val]]);
 
-    let con = null;
+    let whereIn = null;
     if (items.length != 0) {
-      con = {
+      whereIn = {
         id: {
           [Op.in]: items,
         },
@@ -48,10 +64,11 @@ export const getAllBarang = async (req: Request, res: Response) => {
       limit,
       offset,
       where: {
-        ...con,
+        ...whereIn,
       },
+      order,
     });
-    console.log(data, "0000");
+
     res.status(200).send({ info: { limit, offset, total }, data });
   } catch (err: any) {
     const error: HttpError = err;
@@ -106,10 +123,11 @@ export const deleteBarang = async (req: Request, res: Response) => {
     const data = await barang.findByPk(id.value);
     if (!data) return res.sendStatus(204);
 
-    data?.destroy();
+    data.destroy();
     return res.status(200).send({ data });
   } catch (err: any) {
     const error: HttpError = err;
+    console.log(err);
     logger.error(error);
     res.status(error.statusCode || 500).send({ message: error.message });
   }

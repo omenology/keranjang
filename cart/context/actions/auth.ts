@@ -66,7 +66,7 @@ const loginSuccess = async (dispatch: Dispatch<authActionType>, token: string, r
 
     await localforage.setItem("token", token);
 
-    dispatchUtils({ type: SET_UTILS, axiosInstance: axiosInstance, socketio: socketio });
+    dispatchUtils({ type: SET_UTILS, axios: axiosInstance, socketio: socketio, localforage: localforage });
     dispatch({ type: LOGIN_SUCCESS, token: token, user: payloadUser });
 
     if (router.pathname !== "/login") {

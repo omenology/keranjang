@@ -4,24 +4,50 @@ import Head from "next/head";
 import { useForm } from "react-hook-form";
 import { useBarang } from "../utils";
 
-import { Button, OverlayTrigger, Tooltip, Modal, Form, Card } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip, Modal, Form, Card, ProgressBar } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Items from "../components/items";
 import Container from "../components/container";
 import css from "../styles/main.module.css";
+import { useUtils } from "../context";
 
 const Index = ({ tes }) => {
-  const [modalShow, setModalShow] = useState(false);
-  const [newData, setNewData] = useState(null);
+  const { axios } = useUtils();
   const { register, handleSubmit } = useForm();
   const { addBarang } = useBarang();
+  const [newData, setNewData] = useState(null);
+  const [modalShow, setModalShow] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [imgUrl, setImgUrl] = useState<string>("");
 
   const modalOpenHandler = () => setModalShow(true);
   const modalCloseHandler = () => setModalShow(false);
 
   const onSubmit = async (data: { name: string; description: string; price: any; image: string }) => {
+    data.image = imgUrl;
     const response = await addBarang(data);
     setNewData(response.data);
+  };
+
+  const inputFileHandler = async (e) => {
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("img", e.target.files[0]);
+      const response = await axios({
+        method: "POST",
+        url: "http://localhost:4002/image",
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+        data: formData,
+      });
+      setImgUrl(response.data.dataFile.url);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error.response);
+    }
   };
 
   return (
@@ -55,12 +81,21 @@ const Index = ({ tes }) => {
             <Form.FloatingLabel label="Price" className="mb-2">
               <Form.Control {...register("price")} type="number" placeholder="Harga barang" />
             </Form.FloatingLabel>
-            <Form.FloatingLabel label="Img Url">
+            {/* <Form.FloatingLabel label="Img Url">
               <Form.Control {...register("image")} type="text" placeholder="Link Gambar barang" />
-            </Form.FloatingLabel>
+            </Form.FloatingLabel> */}
+            <div>
+              <label htmlFor="formFile" className="form-label">
+                image file
+              </label>
+              <input className="form-control" type="file" id="formFile" onChange={inputFileHandler} />
+              {loading ? <ProgressBar animated now={100} style={{ marginTop: 1, height: 5 }} /> : null}
+            </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button type="submit">Submit</Button>
+            <Button disabled={loading} type="submit">
+              Submit
+            </Button>
           </Modal.Footer>
         </Form>
       </Modal>

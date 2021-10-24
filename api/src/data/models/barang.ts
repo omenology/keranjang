@@ -1,20 +1,6 @@
 import { BuildOptions, Model } from "sequelize/types";
 import { sequelize, DataTypes } from "../../helpers/connection";
 
-interface barangAttributes extends Model {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  image: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-type BarangStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): barangAttributes;
-};
-
 export default sequelize.define(
   "barang",
   {
@@ -49,21 +35,21 @@ export default sequelize.define(
     timestamps: true,
     freezeTableName: true,
     hooks: {
-      afterUpdate: (ins, opt) => {
-        console.log("after update");
-      },
-      afterDestroy: (ins) => {
-        console.log("after destroy");
-      },
-      beforeDestroy: () => {
-        console.log("befor destroy");
-      },
-      afterFind: (ins, opt) => {
-        console.log("after find");
-      },
-      beforeFind: () => {
-        console.log("before find");
-      },
+      // afterUpdate: (ins, opt) => {
+      //   console.log("after update");
+      // },
+      // afterDestroy: (ins) => {
+      //   console.log("after destroy");
+      // },
+      // beforeDestroy: () => {
+      //   console.log("befor destroy");
+      // },
+      // afterFind: (ins, opt) => {
+      //   console.log("after find");
+      // },
+      // beforeFind: () => {
+      //   console.log("before find");
+      // },
     },
   }
-) as BarangStatic;
+);

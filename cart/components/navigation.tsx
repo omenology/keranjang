@@ -51,7 +51,7 @@ const Navigation = ({ children }) => {
                 router.push("/riwayat");
               }}
             >
-              <span className="nav-link">Riwayat</span>
+              <span className="nav-link">Pesanan Saya</span>
             </li>
           </ul>
         </div>

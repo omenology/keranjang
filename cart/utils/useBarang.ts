@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { errorType, infoType, loadingType } from ".";
-import { useUtils } from "../context/actions/utils";
+import { useUtils } from "../context/";
 
 export type dataBarangType = {
   id: string;
@@ -13,7 +13,7 @@ export type dataBarangType = {
 export type dataBarangArrType = dataBarangType[];
 
 export const useBarang = () => {
-  const { state: utils } = useUtils();
+  const { axios } = useUtils();
   const [data, setData] = useState<dataBarangArrType>([]);
   const [info, setInfo] = useState<infoType>(null);
   const [loading, setLoading] = useState<loadingType>(false);
@@ -24,7 +24,7 @@ export const useBarang = () => {
     (async () => {
       try {
         setLoading(true);
-        const res = await utils.axios.get(`/barang/`, {
+        const res = await axios.get(`/barang/`, {
           params: query,
         });
 
@@ -46,7 +46,7 @@ export const useBarang = () => {
     payload.price = parseInt(payload.price);
     if (payload.image == "") delete payload.image;
     try {
-      const respones = await utils.axios.post("http://localhost:4000/barang/", payload);
+      const respones = await axios.post("http://localhost:4000/barang/", payload);
       return respones.data;
     } catch (error) {
       console.log(error.response);
@@ -55,7 +55,7 @@ export const useBarang = () => {
 
   const addToKeranjang = async (id: string) => {
     try {
-      const response = await utils.axios.post(`/keranjang/${id}`);
+      const response = await axios.post(`/keranjang/${id}`);
       return response.data;
     } catch (error) {
       console.log(error.response);
