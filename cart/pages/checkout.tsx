@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import Script from "next/script";
 
 import { tryJsonParse, dataCheckoutType, dataBarangType } from "../utils";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
 import { Card, Table } from "react-bootstrap";
 import { useUtils } from "../context";
+import Button from "@restart/ui/esm/Button";
 
 const Checkout = (props) => {
   const { axios } = useUtils();
   const router = useRouter();
+  const [snap, setSnap] = useState(null);
   const data = tryJsonParse(router.query?.data as string) as dataCheckoutType;
   if (!data) router.push("/keranjang");
 
   const [barang, setBarang] = useState<dataBarangType[]>([]);
 
   useEffect(() => {
-    console.log(data);
+    console.log(router.query, window?.snap);
 
+    if (window?.snap) setSnap(window?.snap);
     axios
       .get("/barang", {
         params: {
@@ -38,7 +42,9 @@ const Checkout = (props) => {
     <>
       <Head>
         <title>Checkout</title>
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-8NaNSQNWSjYfRHQ3"></script>
       </Head>
+
       <Container className="mt-5">
         <Card>
           <Card.Header>
@@ -69,7 +75,7 @@ const Checkout = (props) => {
               <tbody>
                 {barang.map((val, index) => {
                   return (
-                    <tr>
+                    <tr key={index}>
                       <td>gambar prod</td>
                       <td>
                         <p className="fw-bold m-0">{val.name}</p>
@@ -85,6 +91,14 @@ const Checkout = (props) => {
             </Table>
           </Card.Body>
         </Card>
+        <Button
+          onClick={() => {
+            console.log(snap, router.query.token);
+            snap.pay(router.query.token);
+          }}
+        >
+          pay
+        </Button>
       </Container>
     </>
   ) : null;

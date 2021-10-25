@@ -44,7 +44,7 @@
     "nodemon": "^2.0.7",
     "supertest": "^6.1.6",
     "tsconfig-paths": "^3.11.0",
-    "typescript": "^4.3.4"
+    "typescript": "^4.4.4"
   },
   "name": "api_cart",
   "version": "1.0.0",

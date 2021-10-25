@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "next/head";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { FloatingLabel, Button, Form } from "react-bootstrap";
@@ -17,6 +18,14 @@ const Forget = (props) => {
 
   const onSubmit = (data): void => {
     console.log(data);
+    axios
+      .post("http://localhost:4000/user/forget", data)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const isEmail = (str: string): boolean => {

@@ -9,7 +9,16 @@ const Wrapper = (props) => {
   React.useEffect(() => {
     isLogin();
   }, []);
-  if (!state.token && router.pathname != "/login") return null;
+  if (!state.token) {
+    switch (router.pathname) {
+      case "/login":
+      case "/forget":
+      case "/register":
+        return props.children;
+      default:
+        return null;
+    }
+  }
   return props.children;
 };
 

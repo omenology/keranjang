@@ -69,10 +69,15 @@ const loginSuccess = async (dispatch: Dispatch<authActionType>, token: string, r
     dispatchUtils({ type: SET_UTILS, axios: axiosInstance, socketio: socketio, localforage: localforage });
     dispatch({ type: LOGIN_SUCCESS, token: token, user: payloadUser });
 
-    if (router.pathname !== "/login") {
-      router.push(router.pathname);
-    } else {
-      router.push("/");
+    switch (router.pathname) {
+      case "/login":
+      case "/forget":
+      case "/register":
+        router.push("/");
+        break;
+      default:
+        router.push(router.pathname);
+        break;
     }
   } catch (error) {
     localforage.removeItem("token");

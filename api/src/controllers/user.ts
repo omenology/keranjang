@@ -4,6 +4,7 @@ import httpError, { HttpError } from "http-errors";
 
 import { logger } from "src/helpers/utils";
 import { user } from "../data/models";
+import { sendMail } from "src/helpers/nodemailer";
 
 // validation body request
 const bodySchema = Joi.object({
@@ -105,6 +106,18 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const forgetPassword = async (req: Request, res: Response) => {
   try {
+    const email = Joi.string().email().required().validate(req.body.email);
+    if (email.error) throw httpError(400, "email is required");
+    const dataUser = await user.findOne({
+      where: {
+        email: email.value,
+      },
+    });
+    if (!dataUser) return res.sendStatus(204);
+    console.log(dataUser?.getDataValue("email"));
+    const resMail = await sendMail(email.value, dataUser?.getDataValue("password"));
+    console.log(resMail);
+    return res.status(200).send(resMail);
   } catch (err: any) {
     const error: HttpError = err;
     logger.error(error);

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import httpError, { HttpError } from "http-errors";
 
-import { logger } from "src/helpers/utils";
+import { logger, snap } from "src/helpers/utils";
 import { keranjang, barang } from "../data/models";
 
 export const addToKeranjang = async (req: Request, res: Response) => {
@@ -63,5 +63,25 @@ export const deletBarangFromKeranjang = async (req: Request, res: Response) => {
     const error: HttpError = err;
     logger.error(error);
     res.status(error.statusCode || 500).send({ message: error.message });
+  }
+};
+
+export const createTransaction = async (req: Request, res: Response) => {
+  try {
+    let parameter = {
+      transaction_details: {
+        order_id: "order-id-node-" + Math.round(new Date().getTime() / 1000),
+        gross_amount: 200000,
+      },
+      credit_card: {
+        secure: true,
+      },
+    };
+    const snapRes = await snap.createTransaction(parameter);
+    return res.status(200).send({ data: snapRes });
+  } catch (err: any) {
+    const error: HttpError = err;
+    logger.error(error);
+    res.status(error.statusCode || error.httpStatusCode || 500).send({ message: error.message });
   }
 };

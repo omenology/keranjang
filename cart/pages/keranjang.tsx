@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 
 import { useKeranjang } from "../utils";
+import { useUtils } from "../context";
 
 import Head from "next/head";
 import { Table, Button, OverlayTrigger, Tooltip, FloatingLabel, Form, Card } from "react-bootstrap";
@@ -18,6 +19,7 @@ const Keranjang = () => {
   const [total, setTotal] = useState(0);
   const [reRender, setRerender] = useState(true);
   const { data, loading, error, removeFromKeranjang } = useKeranjang();
+  const { axios } = useUtils();
   const {
     register,
     handleSubmit,
@@ -46,7 +48,7 @@ const Keranjang = () => {
     setRerender(!reRender);
   };
 
-  const onSubmit = (dataForm: { reciver: string; shippingAddress: string }): void => {
+  const onSubmit = async (dataForm: { reciver: string; shippingAddress: string }) => {
     const payload = {
       items: [],
       totalPayment: total,
@@ -67,7 +69,7 @@ const Keranjang = () => {
             payload.items[hole] = payload.items[hole - 1];
             hole--;
           }
-          //payload.items[hole] = value;
+
           payload.items[hole] = {
             barangId: data.data[index].barang.id,
             quantity: parseInt(refQuantity.current[index].value),
@@ -75,13 +77,16 @@ const Keranjang = () => {
         }
       }
     });
-
-    router.push({
-      pathname: "/checkout",
-      query: {
-        data: JSON.stringify(payload),
-      },
-    });
+    try {
+      const resTransaction = await axios.post("/keranjang/transaction");
+      router.push({
+        pathname: "/checkout",
+        query: {
+          data: JSON.stringify(payload),
+          token: resTransaction.data.data.token,
+        },
+      });
+    } catch (error) {}
   };
 
   return (
