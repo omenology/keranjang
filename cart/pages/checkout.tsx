@@ -1,48 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import Script from "next/script";
 
 import { tryJsonParse, dataCheckoutType, dataBarangType } from "../utils";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
-import { Card, Table } from "react-bootstrap";
+import { Card, Table, Button } from "react-bootstrap";
 import { useUtils } from "../context";
-import Button from "@restart/ui/esm/Button";
 
 const Checkout = (props) => {
   const { axios } = useUtils();
   const router = useRouter();
-  const [snap, setSnap] = useState(null);
+  const [snap, setSnap] = useState(undefined);
+  const [tokenTransaction, setTokenTransaction] = useState<string>("");
   const data = tryJsonParse(router.query?.data as string) as dataCheckoutType;
   if (!data) router.push("/keranjang");
 
   const [barang, setBarang] = useState<dataBarangType[]>([]);
 
   useEffect(() => {
-    console.log(router.query, window?.snap);
+    getBarangAndtransaction();
+  }, []);
 
-    if (window?.snap) setSnap(window?.snap);
-    axios
-      .get("/barang", {
+  useEffect(() => {
+    if (window?.snap) setSnap(window?.snap as any);
+  }, [window.snap]);
+
+  const getBarangAndtransaction = async () => {
+    try {
+      const resBarang = await axios.get("/barang?id=asc", {
         params: {
           items: JSON.stringify(data.items.map((val) => val.barangId)),
         },
-      })
-      .then((val) => {
-        console.log(val);
-        setBarang(val.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
       });
-  }, []);
+      const barang: dataBarangType[] = resBarang.data.data;
+      setBarang(barang);
+
+      const bodyTransaction = {
+        gross_amount: data.totalPayment,
+        shipping_address: data.shippingAddress,
+        reciver: data.reciver,
+        item_details: barang.map((val, index) => {
+          return {
+            id: val.id,
+            price: val.price,
+            quantity: data.items[index].quantity,
+            name: val.name,
+          };
+        }),
+      };
+      const resTransaction = await axios.post("/keranjang/transaction", bodyTransaction);
+      setTokenTransaction(resTransaction.data.data.token);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return data ? (
     <>
       <Head>
         <title>Checkout</title>
-        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-8NaNSQNWSjYfRHQ3"></script>
+        <script async src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-8NaNSQNWSjYfRHQ3"></script>
       </Head>
 
       <Container className="mt-5">
@@ -92,9 +110,9 @@ const Checkout = (props) => {
           </Card.Body>
         </Card>
         <Button
+          disabled={snap ? false : true}
           onClick={() => {
-            console.log(snap, router.query.token);
-            snap.pay(router.query.token);
+            snap.pay(tokenTransaction);
           }}
         >
           pay

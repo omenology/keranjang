@@ -68,13 +68,39 @@ export const deletBarangFromKeranjang = async (req: Request, res: Response) => {
 
 export const createTransaction = async (req: Request, res: Response) => {
   try {
-    let parameter = {
+    const body = Joi.object({
+      gross_amount: Joi.number().required(),
+      shipping_address: Joi.string().required(),
+      reciver: Joi.string(),
+      item_details: Joi.array().items(
+        Joi.object({
+          id: Joi.string().guid(),
+          price: Joi.number(),
+          quantity: Joi.number(),
+          name: Joi.string(),
+        })
+      ),
+    })
+      .options({ stripUnknown: true })
+      .validate(req.body);
+    if (body.error) throw httpError(400, body.error.message);
+
+    const parameter: parameterSnap = {
       transaction_details: {
-        order_id: "order-id-node-" + Math.round(new Date().getTime() / 1000),
-        gross_amount: 200000,
+        order_id: "order-" + Math.round(new Date().getTime() / 1000),
+        gross_amount: body.value.gross_amount,
       },
       credit_card: {
         secure: true,
+      },
+      item_details: body.value.item_details,
+      customer_details: {
+        email: req.decoded.email,
+        first_name: req.decoded.username,
+        shipping_address: {
+          address: body.value.shipping_address,
+          first_name: body.value.reciver,
+        },
       },
     };
     const snapRes = await snap.createTransaction(parameter);

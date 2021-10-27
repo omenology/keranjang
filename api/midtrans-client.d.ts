@@ -21,7 +21,7 @@ type parameterSnap = {
     email?: string;
     phone?: string;
     billing_address?: address;
-    shipping_address: address;
+    shipping_address?: address;
   };
 };
 

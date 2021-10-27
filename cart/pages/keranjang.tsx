@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 
 import { useKeranjang } from "../utils";
-import { useUtils } from "../context";
 
 import Head from "next/head";
 import { Table, Button, OverlayTrigger, Tooltip, FloatingLabel, Form, Card } from "react-bootstrap";
@@ -19,7 +18,7 @@ const Keranjang = () => {
   const [total, setTotal] = useState(0);
   const [reRender, setRerender] = useState(true);
   const { data, loading, error, removeFromKeranjang } = useKeranjang();
-  const { axios } = useUtils();
+
   const {
     register,
     handleSubmit,
@@ -77,16 +76,13 @@ const Keranjang = () => {
         }
       }
     });
-    try {
-      const resTransaction = await axios.post("/keranjang/transaction");
-      router.push({
-        pathname: "/checkout",
-        query: {
-          data: JSON.stringify(payload),
-          token: resTransaction.data.data.token,
-        },
-      });
-    } catch (error) {}
+
+    router.push({
+      pathname: "/checkout",
+      query: {
+        data: JSON.stringify(payload),
+      },
+    });
   };
 
   return (
