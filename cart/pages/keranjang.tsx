@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 
@@ -17,14 +17,15 @@ const Keranjang = () => {
   const refCheck = useRef([]);
   const [total, setTotal] = useState(0);
   const [reRender, setRerender] = useState(true);
-  const { data, loading, error, removeFromKeranjang } = useKeranjang();
+  const [snap, setSnap] = useState(undefined);
+  const [snapToken, setSnapToken] = useState("");
+  const { data, loading, error, removeFromKeranjang, createTransaction } = useKeranjang();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const router = useRouter();
 
   const onChangeQuantity = (value: number, index: number) => {
     refTotal.current[index].innerHTML = (data.data[index].barang.price * value).toLocaleString("id-ID", { style: "currency", currency: "IDR" });
@@ -32,11 +33,14 @@ const Keranjang = () => {
 
   const totalHargaHandler = () => {
     let tesTotal = 0;
-    refTotal.current.forEach((el, index) => {
-      let formatText = el.innerText.replace(/\./g, "").split(",")[0] + "." + el.innerText.replace(/\./g, "").split(",")[1];
-      let harga = parseFloat(formatText.slice(3));
+    let formatText;
+    refTotal.current?.forEach((el, index) => {
+      if (el) {
+        formatText = el.innerText.replace(/\./g, "").split(",")[0] + "." + el.innerText.replace(/\./g, "").split(",")[1];
+      }
+      let harga = parseFloat(formatText?.slice(3) || 0);
 
-      if (refCheck.current[index].checked) tesTotal += harga;
+      if (refCheck.current[index]?.checked) tesTotal += harga;
     });
     setTotal(tesTotal);
   };
@@ -45,50 +49,53 @@ const Keranjang = () => {
     removeFromKeranjang(id);
     data.data.splice(index, 1);
     setRerender(!reRender);
+    setTimeout(() => {
+      totalHargaHandler();
+    }, 100);
   };
 
   const onSubmit = async (dataForm: { reciver: string; shippingAddress: string }) => {
-    const payload = {
-      items: [],
-      totalPayment: total,
-      ...dataForm,
+    const bodyTransaction = {
+      gross_amount: total,
+      shipping_address: dataForm.shippingAddress,
+      reciver: dataForm.reciver,
+      item_details: [],
     };
 
     refCheck.current.forEach((val, index) => {
-      if (val.checked) {
-        if (payload.items.length == 0) {
-          payload.items.push({
-            barangId: data.data[index].barang.id,
-            quantity: parseInt(refQuantity.current[index].value),
-          });
-        } else {
-          let hole = payload.items.length;
-          let value = data.data[index].barang.id;
-          while (hole > 0 && (payload.items[hole - 1].barangId as string).localeCompare(value) > 0) {
-            payload.items[hole] = payload.items[hole - 1];
-            hole--;
-          }
-
-          payload.items[hole] = {
-            barangId: data.data[index].barang.id,
-            quantity: parseInt(refQuantity.current[index].value),
-          };
-        }
+      if (val?.checked) {
+        bodyTransaction.item_details.push({
+          id: data.data[index].barang.id,
+          price: data.data[index].barang.price,
+          quantity: parseInt(refQuantity.current[index].value),
+          name: data.data[index].barang.name,
+        });
       }
     });
-
-    router.push({
-      pathname: "/checkout",
-      query: {
-        data: JSON.stringify(payload),
-      },
-    });
+    const transaction = (await createTransaction(bodyTransaction)) as { token: string; redirect_url: string };
+    console.log(transaction);
+    setSnapToken(transaction.token);
   };
+
+  React.useEffect(() => {
+    if (!window.snap) {
+      setTimeout(() => {
+        setRerender(!reRender);
+      }, 1000);
+    } else {
+      setSnap(window.snap);
+    }
+  }, [window.snap]);
+
+  React.useEffect(() => {
+    if (snap && snapToken) snap.pay(snapToken);
+  }, [snapToken]);
 
   return (
     <>
       <Head>
         <title>Keranjang</title>
+        <script async src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-8NaNSQNWSjYfRHQ3"></script>
       </Head>
       <Container>
         <Table>
@@ -148,7 +155,14 @@ const Keranjang = () => {
                   </td>
                   <td className="text-center">
                     <OverlayTrigger overlay={<Tooltip>Hapus</Tooltip>}>
-                      <Button size="sm" variant="danger" onClick={() => deletHandler(barang.id, index)}>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => {
+                          deletHandler(barang.id, index);
+                          totalHargaHandler();
+                        }}
+                      >
                         <i className="fas fa-times" />
                       </Button>
                     </OverlayTrigger>
@@ -175,7 +189,7 @@ const Keranjang = () => {
                       Alamat penerima tidak boleh kosong
                     </Form.Control.Feedback>
                   </FloatingLabel>
-                  <Button disabled={total == 0} type="submit">
+                  <Button disabled={total == 0 && snap} type="submit">
                     Checkout
                   </Button>
                 </Form>

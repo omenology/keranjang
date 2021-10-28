@@ -12,11 +12,16 @@ type stateKeranjang = {
   info: infoType;
 };
 
-type payloadCheckout = {
-  items: string[];
-  totalPayment: number;
+type bodyTransaction = {
+  gross_amount: number;
+  shipping_address: string;
   reciver: string;
-  shippingAddress: string;
+  item_details: {
+    id: string;
+    price: number;
+    quantity: number;
+    name: string;
+  }[];
 };
 
 export const useKeranjang = () => {
@@ -55,14 +60,14 @@ export const useKeranjang = () => {
     }
   };
 
-  const checkout = async (payload: payloadCheckout) => {
+  const createTransaction = async (payload: bodyTransaction) => {
     try {
-      const response = await axios.post(`/checkout/`, payload);
-      console.log(response);
+      const response = await axios.post(`/keranjang/transaction`, payload);
+      return response.data.data;
     } catch (error) {
       console.log(error.response);
     }
   };
 
-  return { data, loading, error, removeFromKeranjang, checkout };
+  return { data, loading, error, removeFromKeranjang, createTransaction };
 };

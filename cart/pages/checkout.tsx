@@ -94,7 +94,9 @@ const Checkout = (props) => {
                 {barang.map((val, index) => {
                   return (
                     <tr key={index}>
-                      <td>gambar prod</td>
+                      <td>
+                        <img src={val.image} className="img-fluid rounded-start" alt={val.name} />
+                      </td>
                       <td>
                         <p className="fw-bold m-0">{val.name}</p>
                         <p className="m-0">{val.description}</p>
