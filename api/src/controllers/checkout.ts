@@ -1,20 +1,23 @@
 import { Request, Response } from "express";
 import Joi from "joi";
+import httpError, { HttpError } from "http-errors";
 
 import { logger } from "../helpers/utils";
 import { checkout } from "../data/models";
 
 const bodySchema = Joi.object({
-  items: Joi.array().items(Joi.string().guid()).default([]),
-  totalPayment: Joi.number().required(),
-  shippingAddress: Joi.string().required(),
+  order_id: Joi.string().required(),
+  item_details: Joi.array().items(Joi.object()).default([]),
+  gross_amount: Joi.number().required(),
+  shipping_address: Joi.string().required(),
   reciver: Joi.string().required(),
+  paymentStatus: Joi.string().required(),
 }).options({ stripUnknown: true });
 
 export const addToCheckout = async (req: Request, res: Response) => {
   try {
     const body = bodySchema.validate(req.body);
-    if (body.error) return res.status(400).send({ message: body.error.message });
+    if (body.error) throw httpError(400, body.error.message);
 
     const data = await checkout.create({
       ...body.value,
@@ -23,9 +26,10 @@ export const addToCheckout = async (req: Request, res: Response) => {
         email: req.decoded.email,
       },
     });
-    res.status(200).send({ data });
-  } catch (error) {
+    return res.status(200).send({ data });
+  } catch (err: any) {
+    const error: HttpError = err;
     logger.error(error);
-    res.sendStatus(500);
+    res.status(error.statusCode || 500).send({ message: error.message });
   }
 };

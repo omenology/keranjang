@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import httpError, { HttpError } from "http-errors";
+import { randomBytes } from "crypto";
 
 import { logger, snap } from "src/helpers/utils";
 import { keranjang, barang } from "../data/models";
@@ -87,7 +88,7 @@ export const createTransaction = async (req: Request, res: Response) => {
 
     const parameter: parameterSnap = {
       transaction_details: {
-        order_id: "order-" + Math.round(new Date().getTime() / 1000),
+        order_id: `order-${randomBytes(5).toString("hex")}`,
         gross_amount: body.value.gross_amount,
       },
       credit_card: {

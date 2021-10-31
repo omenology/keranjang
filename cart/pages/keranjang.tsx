@@ -19,7 +19,8 @@ const Keranjang = () => {
   const [reRender, setRerender] = useState(true);
   const [snap, setSnap] = useState(undefined);
   const [snapToken, setSnapToken] = useState("");
-  const { data, loading, error, removeFromKeranjang, createTransaction } = useKeranjang();
+  const [dataCheckout, setDataCheckout] = useState({});
+  const { data, loading, error, removeFromKeranjang, createTransaction, transactionSuccess } = useKeranjang();
 
   const {
     register,
@@ -69,11 +70,14 @@ const Keranjang = () => {
           price: data.data[index].barang.price,
           quantity: parseInt(refQuantity.current[index].value),
           name: data.data[index].barang.name,
+          image: data.data[index].barang.image,
+          description: data.data[index].barang.description,
         });
       }
     });
     const transaction = (await createTransaction(bodyTransaction)) as { token: string; redirect_url: string };
-    console.log(transaction);
+
+    setDataCheckout(bodyTransaction);
     setSnapToken(transaction.token);
   };
 
@@ -88,7 +92,20 @@ const Keranjang = () => {
   }, [window.snap]);
 
   React.useEffect(() => {
-    if (snap && snapToken) snap.pay(snapToken);
+    if (snap && snapToken)
+      snap.pay(snapToken, {
+        onSuccess: async (result) => {
+          const resTSuccess = await transactionSuccess({ ...dataCheckout, paymentStatus: "success" });
+          console.log(result, "success", resTSuccess);
+        },
+        onPending: async (result) => {
+          const resTPending = await transactionSuccess({ ...dataCheckout, paymentStatus: "pendding" });
+          console.log(result, "pendding", resTPending);
+        },
+        onError: async (result) => {
+          console.log(result, "err");
+        },
+      });
   }, [snapToken]);
 
   return (

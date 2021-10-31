@@ -9,8 +9,13 @@ export default sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
+    orderId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
     items: {
-      type: DataTypes.ARRAY(DataTypes.UUID),
+      type: DataTypes.ARRAY(DataTypes.JSON),
       allowNull: false,
     },
     totalPayment: {
@@ -26,6 +31,10 @@ export default sequelize.define(
       type: DataTypes.TEXT,
     },
     reciver: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    paymentStatus: {
       type: DataTypes.STRING,
       allowNull: false,
     },
