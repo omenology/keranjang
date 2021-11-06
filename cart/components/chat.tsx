@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
+import { GetServerSideProps } from "next";
 import { Card, Button, Form } from "react-bootstrap";
 
 import { useAuth, useUtils } from "../context";
+import { GetServerSidePropsContextWithSession, withSession } from "../utils";
 
 import css from "../styles/chat.module.css";
 
@@ -13,8 +15,9 @@ interface argsSocketType {
   userId: string;
   message: string;
 }
-const Chat = () => {
+const Chat = ({ tes }) => {
   const { state: authState } = useAuth();
+  console.log("authState");
   const { socketio, localforage } = useUtils();
 
   const [onlineUser, setOnlineUser] = useState<string[]>([]);

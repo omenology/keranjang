@@ -1,9 +1,16 @@
+import { IncomingMessage } from "http";
+import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
+import { Session } from "next-iron-session";
+import { NextApiRequestCookies } from "next/dist/server/api-utils";
+
 export { emailOrUsername, tryJsonParse };
 export { useBarang } from "./useBarang";
 export { useKeranjang } from "./useKeranjang";
 export { useLocalForage } from "./useLocalForage";
+export { withSession } from "./session";
+export { fetcher } from "./fetcher";
 
-export type { infoType, errorType, loadingType, dataCheckoutType };
+export type { infoType, errorType, loadingType, dataCheckoutType, GetServerSidePropsContextWithSession, RequestWithSession, NextApiResponse };
 export type { dataBarangType, dataBarangArrType } from "./useBarang";
 
 type infoType = {
@@ -22,6 +29,17 @@ type dataCheckoutType = {
   shippingAddress: string;
   totalPayment: number;
 };
+
+interface GetServerSidePropsContextWithSession extends GetServerSidePropsContext {
+  req: IncomingMessage & {
+    cookies: NextApiRequestCookies;
+    session: Session;
+  };
+}
+
+interface RequestWithSession extends NextApiRequest {
+  session: Session;
+}
 
 const emailOrUsername = (str: string): { email?: string; username?: string } => {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(str)) {

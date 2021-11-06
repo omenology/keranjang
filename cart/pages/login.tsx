@@ -87,4 +87,12 @@ const Login = (props) => {
   );
 };
 
+export const getServerSideProps = () => {
+  return {
+    props: {
+      tes: "tesssssssssssssss",
+    },
+  };
+};
+
 export default Login;

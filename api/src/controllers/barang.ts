@@ -105,8 +105,8 @@ export const updateBarang = async (req: Request, res: Response) => {
     const data = await barang.findByPk(id.value);
     if (!data) return res.sendStatus(200);
 
-    data?.set(body.value);
-    data?.save();
+    data.set(body.value);
+    data.save();
     return res.status(200).send({ data });
   } catch (err: any) {
     const error: HttpError = err;

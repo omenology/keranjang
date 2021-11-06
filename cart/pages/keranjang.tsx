@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/router";
 
 import { useKeranjang } from "../utils";
 
 import Head from "next/head";
+import Script from "next/script";
 import { Table, Button, OverlayTrigger, Tooltip, FloatingLabel, Form, Card } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
 
 import css from "../styles/keranjang.module.css";
+import { useTes } from "../utils/useTes";
 
 const Keranjang = () => {
   const refTotal = useRef([]);
@@ -78,28 +79,28 @@ const Keranjang = () => {
     const transaction = (await createTransaction(bodyTransaction)) as { token: string; redirect_url: string };
 
     setDataCheckout(bodyTransaction);
-    setSnapToken(transaction.token);
+    setSnapToken(transaction.token || null);
   };
 
-  React.useEffect(() => {
-    if (!window.snap) {
+  useEffect(() => {
+    if (!(window as any).snap) {
       setTimeout(() => {
         setRerender(!reRender);
       }, 1000);
     } else {
-      setSnap(window.snap);
+      setSnap((window as any).snap);
     }
-  }, [window.snap]);
+  }, [(window as any).snap]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (snap && snapToken)
       snap.pay(snapToken, {
         onSuccess: async (result) => {
-          const resTSuccess = await transactionSuccess({ ...dataCheckout, paymentStatus: "success" });
+          const resTSuccess = await transactionSuccess({ ...dataCheckout, order_id: result.order_id, paymentStatus: result.transaction_status, pdfUrl: result?.pdf_url || null });
           console.log(result, "success", resTSuccess);
         },
         onPending: async (result) => {
-          const resTPending = await transactionSuccess({ ...dataCheckout, paymentStatus: "pendding" });
+          const resTPending = await transactionSuccess({ ...dataCheckout, order_id: result.order_id, paymentStatus: result.transaction_status, pdfUrl: result?.pdf_url || null });
           console.log(result, "pendding", resTPending);
         },
         onError: async (result) => {
@@ -112,8 +113,8 @@ const Keranjang = () => {
     <>
       <Head>
         <title>Keranjang</title>
-        <script async src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-8NaNSQNWSjYfRHQ3"></script>
       </Head>
+      <Script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-8NaNSQNWSjYfRHQ3" strategy="beforeInteractive"></Script>
       <Container>
         <Table>
           <thead>

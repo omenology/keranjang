@@ -2,16 +2,19 @@ import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
-import { useBarang } from "../utils";
+
+import { GetServerSidePropsContextWithSession, useBarang, withSession } from "../utils";
+import { useUtils } from "../context";
 
 import { Button, OverlayTrigger, Tooltip, Modal, Form, Card, ProgressBar } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Items from "../components/items";
 import Container from "../components/container";
 import css from "../styles/main.module.css";
-import { useUtils } from "../context";
+import { useTes } from "../utils/useTes";
 
 const Index = ({ tes }) => {
+  //console.log(tes);
   const { axios } = useUtils();
   const { register, handleSubmit } = useForm();
   const { addBarang } = useBarang();
@@ -105,10 +108,16 @@ const Index = ({ tes }) => {
 
 Index.navigation = Navigation;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = withSession(async (context: GetServerSidePropsContextWithSession) => {
+  // return {
+  //   redirect: {
+  //     permanent: false,
+  //     destination: "/keranjang",
+  //   },
+  // };
   return {
-    props: { tes: "asd" },
+    props: {},
   };
-};
+});
 
 export default Index;

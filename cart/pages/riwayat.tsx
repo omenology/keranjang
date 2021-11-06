@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Card, Table } from "react-bootstrap";
+
+import { useUtils } from "../context";
 
 import Navigation from "../components/navigation";
 import Container from "../components/container";
 
 const Riwayat = () => {
+  const { axios } = useUtils();
+  const [dataRiwayat, setDataRiwayat] = useState([]);
+  useEffect(() => {
+    axios
+      .get("/checkout")
+      .then((res) => {
+        console.log(res.data);
+        setDataRiwayat(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <>
       <Head>
