@@ -14,7 +14,6 @@ import css from "../styles/main.module.css";
 import { useTes } from "../utils/useTes";
 
 const Index = ({ tes }) => {
-  //console.log(tes);
   const { axios } = useUtils();
   const { register, handleSubmit } = useForm();
   const { addBarang } = useBarang();
@@ -115,6 +114,8 @@ export const getServerSideProps: GetServerSideProps = withSession(async (context
   //     destination: "/keranjang",
   //   },
   // };
+  console.log(context.req.session.get("token"), context.req.session.get("myself"), context.req.session.get("tes"));
+
   return {
     props: {},
   };

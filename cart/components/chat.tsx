@@ -15,9 +15,9 @@ interface argsSocketType {
   userId: string;
   message: string;
 }
-const Chat = ({ tes }) => {
+const Chat = () => {
   const { state: authState } = useAuth();
-  console.log("authState");
+
   const { socketio, localforage } = useUtils();
 
   const [onlineUser, setOnlineUser] = useState<string[]>([]);

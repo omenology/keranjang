@@ -9,6 +9,8 @@ import { emailOrUsername } from "../utils";
 import LoginWraper from "../components/loginWraper";
 
 import css from "../styles/login.module.css";
+import { useTes } from "../utils/useTes";
+import axios from "axios";
 
 const Login = (props) => {
   const {
@@ -24,7 +26,18 @@ const Login = (props) => {
       ...emailOrUsername(data.identifier),
       password: data.password,
     };
-    login(payloadLogin);
+
+    axios
+      .post("/api/auth/login", {
+        payload: payloadLogin,
+      })
+      .then((res) => {
+        console.log(res);
+        login(payloadLogin);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -85,14 +98,6 @@ const Login = (props) => {
       </p>
     </LoginWraper>
   );
-};
-
-export const getServerSideProps = () => {
-  return {
-    props: {
-      tes: "tesssssssssssssss",
-    },
-  };
 };
 
 export default Login;

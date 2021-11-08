@@ -1,9 +1,10 @@
+import axios from "axios";
 import { IncomingMessage } from "http";
 import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 import { Session } from "next-iron-session";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 
-export { emailOrUsername, tryJsonParse };
+export { emailOrUsername, tryJsonParse, axiosInstance };
 export { useBarang } from "./useBarang";
 export { useKeranjang } from "./useKeranjang";
 export { useLocalForage } from "./useLocalForage";
@@ -40,6 +41,11 @@ interface GetServerSidePropsContextWithSession extends GetServerSidePropsContext
 interface RequestWithSession extends NextApiRequest {
   session: Session;
 }
+
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:4000/",
+  validateStatus: () => true,
+});
 
 const emailOrUsername = (str: string): { email?: string; username?: string } => {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(str)) {

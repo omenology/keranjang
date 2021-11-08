@@ -3,12 +3,12 @@ import { withSession, RequestWithSession, NextApiResponse } from "../../utils";
 
 export default withSession(async (req: RequestWithSession, res: NextApiResponse) => {
   try {
-    console.log("hit");
+    console.log("hit", req.session.get("token"));
     const data = await axios.get("http://localhost:4000/barang", {
       headers: {
         Authorization:
           "Bearer " +
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsQG1haWwuY29tIiwidXNlcm5hbWUiOiJ1c2VybmFtZTEiLCJ1c2VySWQiOiJiNzg1YTU2NC0yNTEzLTQ0ZmItOWEyOS1kZjhiMzlmOGIxNjgiLCJpYXQiOjE2MzYwMDA0NjcsImV4cCI6MTYzNjAyOTI2N30.SZV8e3e2JmgpBxvCtj2e4oNW-NUpsVu0Kl7fiDLa_xY",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsQG1haWwuY29tIiwidXNlcm5hbWUiOiJ1c2VybmFtZTEiLCJ1c2VySWQiOiJiNzg1YTU2NC0yNTEzLTQ0ZmItOWEyOS1kZjhiMzlmOGIxNjgiLCJpYXQiOjE2MzYyMDIxNzAsImV4cCI6MTYzNjIzMDk3MH0.yo1HbqBlfCe0iYVf6zRBqBF61Cf5G_Z5HADZDkGCcmY",
       },
       validateStatus: (status) => true,
     });

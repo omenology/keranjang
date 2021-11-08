@@ -5,14 +5,12 @@ import { Session, withIronSession } from "next-iron-session";
 export type NextIronRequest = NextApiRequest & { session: Session };
 export type NextIronHandler = (req: NextIronRequest, res: NextApiResponse) => void | Promise<void>;
 
-export const withSession = (handler: any) =>
+export const withSession = (handler: Function) =>
   withIronSession(handler, {
     password: process.env.SECRET_COOKIE_PASSWORD || "asdjaskldjlkasjdlkasjdlasjdasdasdasdasdasdasdasdasdasdad",
-    cookieName: "next-iron-session/examples/next.js",
+    cookieName: "iron-session",
     cookieOptions: {
-      // the next line allows to use the session in non-https environments like
-      // Next.js dev mode (http://localhost:3000)
-      // secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
     },
     ttl: 60 * 60 * 8,
   });

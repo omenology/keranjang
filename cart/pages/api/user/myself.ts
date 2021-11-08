@@ -1,16 +1,17 @@
-import axios from "axios";
-import { withSession, RequestWithSession, NextApiResponse } from "../../../utils";
+import { withSession, RequestWithSession, NextApiResponse, axiosInstance } from "../../../utils";
 
 export default withSession(async (req: RequestWithSession, res: NextApiResponse) => {
   try {
-    const data = await axios.get("http://localhost:4000/user/myself/", {
+    const resMyself = await axiosInstance.get("/user/myself/", {
       headers: {
         Authorization: "Bearer " + req.session.get("token"),
       },
-      validateStatus: (status) => true,
     });
 
-    res.status(data.status).json({ data: data.data });
+    req.session.set("myself", resMyself.data.data);
+    await req.session.save();
+
+    res.status(resMyself.status).json({ data: resMyself.data });
   } catch (err) {
     res.status(500).send({ message: "something went wrong" });
   }
