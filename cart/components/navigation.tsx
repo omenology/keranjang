@@ -6,7 +6,7 @@ import { useAuth } from "../context";
 import css from "../styles/main.module.css";
 import Chat from "./chat";
 
-const Navigation = ({ children }) => {
+const Navigation = ({ children, token }) => {
   const navEl = useRef(null);
   const router = useRouter();
   const { logout } = useAuth();
@@ -72,7 +72,7 @@ const Navigation = ({ children }) => {
         </div>
       </div>
       {children}
-      <Chat />
+      <Chat token={token} />
     </React.Fragment>
   );
 };

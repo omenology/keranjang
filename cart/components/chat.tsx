@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { GetServerSideProps } from "next";
+import jwtDecode from "jwt-decode";
+import { io, Socket } from "socket.io-client";
+import localforage from "localforage";
+
 import { Card, Button, Form } from "react-bootstrap";
-
-import { useAuth, useUtils } from "../context";
-import { GetServerSidePropsContextWithSession, withSession } from "../utils";
-
 import css from "../styles/chat.module.css";
 
 interface IChatMsg {
@@ -15,10 +14,22 @@ interface argsSocketType {
   userId: string;
   message: string;
 }
-const Chat = () => {
-  const { state: authState } = useAuth();
+let socketio: Socket | null = null;
 
-  const { socketio, localforage } = useUtils();
+const Chat = ({ token }) => {
+  const dataUser = jwtDecode(token) as {
+    userId: string;
+    username: string;
+    email: string;
+  };
+
+  if (!socketio) {
+    socketio = io("http://localhost:4001/", {
+      auth: {
+        token: token,
+      },
+    });
+  }
 
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const [[TIdUser, TUsername], setTarget] = useState<string[]>([]);
@@ -33,7 +44,7 @@ const Chat = () => {
     socketio.on("onlineUsers", (data) => {
       setOnlineUser(data);
     });
-    socketio.on(authState.user?.id, async (data: argsSocketType) => {
+    socketio.on(dataUser?.userId, async (data: argsSocketType) => {
       updateLocalMsg(true, data.userId, data.message);
       setHimMsg(data);
     });
@@ -47,13 +58,13 @@ const Chat = () => {
     refChatBox.current.textContent = "";
     setTarget(target);
     setShowChat(true);
-    populateChat(`${authState.user.id} ${target[0]}`);
+    populateChat(`${dataUser?.userId} ${target[0]}`);
   };
 
   const sendHandler = async () => {
     updateLocalMsg(false, TIdUser, refText.current.value);
     appendChild(false, refText.current.value);
-    socketio.emit(authState.user?.id, TIdUser, refText.current.value);
+    socketio.emit(dataUser?.userId, TIdUser, refText.current.value);
     refText.current.value = "";
   };
 
@@ -65,9 +76,9 @@ const Chat = () => {
   };
 
   const updateLocalMsg = async (him: boolean, TargetUserId: string, msg: string) => {
-    const localMsg: IChatMsg[] = (await localforage.getItem(`${authState.user.id} ${TargetUserId}`)) || [];
+    const localMsg: IChatMsg[] = (await localforage.getItem(`${dataUser?.userId} ${TargetUserId}`)) || [];
     localMsg.push({ [him ? "him" : "me"]: msg });
-    await localforage.setItem(`${authState.user?.id} ${TargetUserId}`, localMsg);
+    await localforage.setItem(`${dataUser?.userId} ${TargetUserId}`, localMsg);
   };
 
   const appendChild = (him: boolean, msg: string) => {
@@ -87,7 +98,7 @@ const Chat = () => {
           <ul className="list-group list-group-flush">
             {onlineUser.map((val: string, index) => {
               const [idUser, username] = val.split(" ");
-              if (idUser == authState.user?.id) return null;
+              if (idUser == dataUser?.userId) return null;
               return (
                 <li key={index} onClick={() => clickOnlineUsersHandler([idUser, username])} className="list-group-item list-group-item-action" style={{ cursor: "pointer" }}>
                   {username}

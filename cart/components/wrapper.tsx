@@ -8,7 +8,6 @@ const Wrapper = (props) => {
 
   React.useEffect(() => {
     isLogin();
-    console.log("render");
   }, []);
   if (!state.token) {
     switch (router.pathname) {

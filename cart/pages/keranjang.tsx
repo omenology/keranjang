@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { GetServerSideProps } from "next";
 import { useForm } from "react-hook-form";
 
-import { useKeranjang } from "../utils";
+import { GetServerSidePropsContextWithSession, useKeranjang, withSession } from "../utils";
 
 import Head from "next/head";
 import Script from "next/script";
@@ -10,7 +11,6 @@ import Navigation from "../components/navigation";
 import Container from "../components/container";
 
 import css from "../styles/keranjang.module.css";
-import { useTes } from "../utils/useTes";
 
 const Keranjang = () => {
   const refTotal = useRef([]);
@@ -226,5 +226,13 @@ const Keranjang = () => {
 };
 
 Keranjang.navigation = Navigation;
+
+export const getServerSideProps: GetServerSideProps = withSession(async (context: GetServerSidePropsContextWithSession) => {
+  return {
+    props: {
+      token: context.req.session.get("token"),
+    },
+  };
+});
 
 export default Keranjang;

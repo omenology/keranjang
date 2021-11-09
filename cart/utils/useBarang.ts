@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { errorType, infoType, loadingType } from ".";
-import { useUtils } from "../context/";
+import { Dispatch, SetStateAction, useState } from "react";
+import axios from "axios";
+import useSWR, { KeyedMutator } from "swr";
+import { fetcher, infoType } from ".";
 
 export type dataBarangType = {
   id: string;
@@ -10,57 +11,69 @@ export type dataBarangType = {
   image: string;
 };
 
-export type dataBarangArrType = dataBarangType[];
+type responseBarangType = {
+  info: infoType;
+  data: dataBarangType[];
+};
 
-export const useBarang = () => {
-  const { axios } = useUtils();
-  const [data, setData] = useState<dataBarangArrType>([]);
-  const [info, setInfo] = useState<infoType>(null);
-  const [loading, setLoading] = useState<loadingType>(false);
-  const [error, setError] = useState<errorType>(false);
-  const [query, setQuery] = useState({ limit: "10" });
+type queryType = {
+  limit?: number;
+  offset?: number;
+  search?: string;
+};
 
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`/barang/`, {
-          params: query,
-        });
+type payloadBarang = {
+  name: string;
+  description?: string;
+  price?: any;
+  image?: string | null;
+};
 
-        setData(res.data.data);
-        setInfo(res.data.info);
-        setLoading(false);
-        if (error) setError(false);
-      } catch (error) {
-        setLoading(false);
-        if (data.length != 0) setData([]);
-        if (!info) setInfo(null);
-        if (error.response) setError(`${error.response.status} ${error.response.statusText}`);
-        setError("something went wrong");
-      }
-    })();
-  }, [query]);
+export const useBarang = (token: string) => {
+  const [query, setQuery] = useState({ limit: "10", offset: "0" });
+  const { data, error, mutate } = useSWR(`http://localhost:4000/barang?${new URLSearchParams(query).toString()}`, (url) =>
+    fetcher(url, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+  );
 
-  const addBarang = async (payload: { name: string; description?: string; price?: any; image?: string | null }) => {
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:4000/",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+
+  const addBarang = async (payload: payloadBarang) => {
     payload.price = parseInt(payload.price);
     if (payload.image == "") delete payload.image;
     try {
-      const respones = await axios.post("http://localhost:4000/barang/", payload);
+      const respones = await axiosInstance.post("http://localhost:4000/barang/", payload);
+      mutate({ ...data, data: data.data.concat(respones.data.data) }, false);
       return respones.data;
     } catch (error) {
-      console.log(error.response);
+      throw error;
     }
   };
 
   const addToKeranjang = async (id: string) => {
     try {
-      const response = await axios.post(`/keranjang/${id}`);
+      const response = await axiosInstance.post(`/keranjang/${id}`);
       return response.data;
     } catch (error) {
-      console.log(error.response);
+      throw error;
     }
   };
 
-  return { data, info, loading, error, addBarang, addToKeranjang, setData, setQuery };
+  return { data, loading: !error && !data, error, mutate, setQuery, addBarang, addToKeranjang } as {
+    data: responseBarangType;
+    loading: boolean;
+    error: Error;
+    mutate: KeyedMutator<any>;
+    setQuery: Dispatch<SetStateAction<queryType>>;
+    addBarang: (payload: payloadBarang) => Promise<responseBarangType>;
+    addToKeranjang: () => Promise<void>;
+  };
 };

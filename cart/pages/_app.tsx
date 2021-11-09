@@ -26,7 +26,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <GlobalProvider>
       <Wrapper>
-        <Navigation>
+        <Navigation {...pageProps}>
           <Component {...pageProps} />
         </Navigation>
       </Wrapper>

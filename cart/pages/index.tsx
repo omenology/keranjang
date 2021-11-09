@@ -2,24 +2,22 @@ import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import jwtDecode from "jwt-decode";
 
 import { GetServerSidePropsContextWithSession, useBarang, withSession } from "../utils";
-import { useUtils } from "../context";
 
-import { Button, OverlayTrigger, Tooltip, Modal, Form, Card, ProgressBar } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip, Modal, Form, Spinner, ProgressBar } from "react-bootstrap";
 import Navigation from "../components/navigation";
-import Items from "../components/items";
+import Item from "../components/item";
 import Container from "../components/container";
 import css from "../styles/main.module.css";
-import { useTes } from "../utils/useTes";
 
-const Index = ({ tes }) => {
-  const { axios } = useUtils();
+const Index = ({ token }) => {
   const { register, handleSubmit } = useForm();
-  const { addBarang } = useBarang();
-  const [newData, setNewData] = useState(null);
+  const { data, loading, addBarang, setQuery, addToKeranjang } = useBarang(token);
   const [modalShow, setModalShow] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingUpload, setLoading] = useState<boolean>(false);
   const [imgUrl, setImgUrl] = useState<string>("");
 
   const modalOpenHandler = () => setModalShow(true);
@@ -27,8 +25,11 @@ const Index = ({ tes }) => {
 
   const onSubmit = async (data: { name: string; description: string; price: any; image: string }) => {
     data.image = imgUrl;
-    const response = await addBarang(data);
-    setNewData(response.data);
+    try {
+      await addBarang(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const inputFileHandler = async (e) => {
@@ -41,6 +42,7 @@ const Index = ({ tes }) => {
         url: "http://localhost:4002/image",
         headers: {
           "content-type": "multipart/form-data",
+          Authorization: "Bearer " + token,
         },
         data: formData,
       });
@@ -59,7 +61,22 @@ const Index = ({ tes }) => {
       </Head>
 
       <Container>
-        <Items newData={newData} />
+        <input
+          type="number"
+          defaultValue={10}
+          onChange={(val) => {
+            setQuery({ limit: +val.currentTarget.value || 1 });
+          }}
+        />
+        {loading ? (
+          <Spinner animation="border" style={{ position: "absolute", top: "50%", left: "50%" }} />
+        ) : (
+          <div className="row">
+            {data.data.map((val, index) => {
+              return <Item key={index} data={val} addToKeranjang={addToKeranjang} />;
+            })}
+          </div>
+        )}
       </Container>
 
       <OverlayTrigger overlay={<Tooltip>Add Product</Tooltip>}>
@@ -83,19 +100,17 @@ const Index = ({ tes }) => {
             <Form.FloatingLabel label="Price" className="mb-2">
               <Form.Control {...register("price")} type="number" placeholder="Harga barang" />
             </Form.FloatingLabel>
-            {/* <Form.FloatingLabel label="Img Url">
-              <Form.Control {...register("image")} type="text" placeholder="Link Gambar barang" />
-            </Form.FloatingLabel> */}
+
             <div>
               <label htmlFor="formFile" className="form-label">
                 image file
               </label>
               <input className="form-control" type="file" id="formFile" onChange={inputFileHandler} />
-              {loading ? <ProgressBar animated now={100} style={{ marginTop: 1, height: 5 }} /> : null}
+              {loadingUpload ? <ProgressBar animated now={100} style={{ marginTop: 1, height: 5 }} /> : null}
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button disabled={loading} type="submit">
+            <Button disabled={loadingUpload} type="submit">
               Submit
             </Button>
           </Modal.Footer>
@@ -108,16 +123,10 @@ const Index = ({ tes }) => {
 Index.navigation = Navigation;
 
 export const getServerSideProps: GetServerSideProps = withSession(async (context: GetServerSidePropsContextWithSession) => {
-  // return {
-  //   redirect: {
-  //     permanent: false,
-  //     destination: "/keranjang",
-  //   },
-  // };
-  console.log(context.req.session.get("token"), context.req.session.get("myself"), context.req.session.get("tes"));
-
   return {
-    props: {},
+    props: {
+      token: context.req.session.get("token"),
+    },
   };
 });
 

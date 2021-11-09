@@ -9,7 +9,6 @@ import { emailOrUsername } from "../utils";
 import LoginWraper from "../components/loginWraper";
 
 import css from "../styles/login.module.css";
-import { useTes } from "../utils/useTes";
 import axios from "axios";
 
 const Login = (props) => {

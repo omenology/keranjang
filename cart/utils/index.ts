@@ -4,23 +4,21 @@ import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next
 import { Session } from "next-iron-session";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 
-export { emailOrUsername, tryJsonParse, axiosInstance };
+export { emailOrUsername, tryJsonParse };
 export { useBarang } from "./useBarang";
 export { useKeranjang } from "./useKeranjang";
-export { useLocalForage } from "./useLocalForage";
+export { useCheckout } from "./useCheckout";
 export { withSession } from "./session";
 export { fetcher } from "./fetcher";
 
-export type { infoType, errorType, loadingType, dataCheckoutType, GetServerSidePropsContextWithSession, RequestWithSession, NextApiResponse };
-export type { dataBarangType, dataBarangArrType } from "./useBarang";
+export type { infoType, dataCheckoutType, GetServerSidePropsContextWithSession, RequestWithSession, NextApiResponse, payloadLogin, payloadRegister };
+export type { dataBarangType } from "./useBarang";
 
 type infoType = {
   limit: number;
   offset: number;
   total: number;
 };
-type errorType = string | boolean;
-type loadingType = boolean;
 type dataCheckoutType = {
   items: {
     barangId: string;
@@ -30,6 +28,8 @@ type dataCheckoutType = {
   shippingAddress: string;
   totalPayment: number;
 };
+type payloadLogin = { password: string; email?: string; username?: string };
+type payloadRegister = { email: string; username: string; password: string };
 
 interface GetServerSidePropsContextWithSession extends GetServerSidePropsContext {
   req: IncomingMessage & {
@@ -41,11 +41,6 @@ interface GetServerSidePropsContextWithSession extends GetServerSidePropsContext
 interface RequestWithSession extends NextApiRequest {
   session: Session;
 }
-
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:4000/",
-  validateStatus: () => true,
-});
 
 const emailOrUsername = (str: string): { email?: string; username?: string } => {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(str)) {

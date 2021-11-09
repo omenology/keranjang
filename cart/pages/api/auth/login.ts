@@ -6,14 +6,9 @@ export default withSession(async (req: RequestWithSession, res: NextApiResponse)
     const resLogin = await axios.post("http://localhost:4000/login", {
       ...req.body.payload,
     });
-    const resMyself = await axios.get("http://localhost:4000/user/myself", {
-      headers: {
-        Authorization: "Bearer " + resLogin.data.data.token,
-      },
-    });
 
     req.session.set("token", resLogin.data.data.token);
-    req.session.set("myself", resMyself.data.data);
+
     await req.session.save();
 
     res.status(resLogin.status).json({ data: resLogin.data });
