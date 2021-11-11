@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import useSWR, { KeyedMutator } from "swr";
+import useSWR, { SWRResponse } from "swr";
 import { fetcher, infoType } from ".";
 
 export type dataBarangType = {
@@ -30,14 +30,14 @@ type payloadBarang = {
 };
 
 export const useBarang = (token: string) => {
-  const [query, setQuery] = useState({ limit: "10", offset: "0" });
-  const { data, error, mutate } = useSWR(`http://localhost:4000/barang?${new URLSearchParams(query).toString()}`, (url) =>
+  const [query, setQuery] = useState<queryType>({ limit: 9, offset: 0 });
+  const { data, error, mutate } = useSWR(`http://localhost:4000/barang?${new URLSearchParams(query as any).toString()}`, (url) =>
     fetcher(url, {
       headers: {
         Authorization: "Bearer " + token,
       },
     })
-  );
+  ) as SWRResponse<responseBarangType, Error>;
 
   const axiosInstance = axios.create({
     baseURL: "http://localhost:4000/",
@@ -46,7 +46,7 @@ export const useBarang = (token: string) => {
     },
   });
 
-  const addBarang = async (payload: payloadBarang) => {
+  const addBarang = async (payload: payloadBarang): Promise<responseBarangType> => {
     payload.price = parseInt(payload.price);
     if (payload.image == "") delete payload.image;
     try {
@@ -67,13 +67,5 @@ export const useBarang = (token: string) => {
     }
   };
 
-  return { data, loading: !error && !data, error, mutate, setQuery, addBarang, addToKeranjang } as {
-    data: responseBarangType;
-    loading: boolean;
-    error: Error;
-    mutate: KeyedMutator<any>;
-    setQuery: Dispatch<SetStateAction<queryType>>;
-    addBarang: (payload: payloadBarang) => Promise<responseBarangType>;
-    addToKeranjang: () => Promise<void>;
-  };
+  return { data, loading: !error && !data, error, mutate, setQuery, addBarang, addToKeranjang };
 };

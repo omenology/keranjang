@@ -6,13 +6,13 @@ import { GetServerSidePropsContextWithSession, useKeranjang, withSession } from 
 
 import Head from "next/head";
 import Script from "next/script";
-import { Table, Button, OverlayTrigger, Tooltip, FloatingLabel, Form, Card } from "react-bootstrap";
+import { Table, Button, OverlayTrigger, Tooltip, FloatingLabel, Form, Card, Spinner } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
 
 import css from "../styles/keranjang.module.css";
 
-const Keranjang = () => {
+const Keranjang = ({ token }) => {
   const refTotal = useRef([]);
   const refQuantity = useRef([]);
   const refCheck = useRef([]);
@@ -21,7 +21,7 @@ const Keranjang = () => {
   const [snap, setSnap] = useState(undefined);
   const [snapToken, setSnapToken] = useState("");
   const [dataCheckout, setDataCheckout] = useState({});
-  const { data, loading, error, removeFromKeranjang, createTransaction, transactionSuccess } = useKeranjang();
+  const { data, loading, error, removeFromKeranjang, createTransaction, transactionSuccess } = useKeranjang(token);
 
   const {
     register,
@@ -76,7 +76,7 @@ const Keranjang = () => {
         });
       }
     });
-    const transaction = (await createTransaction(bodyTransaction)) as { token: string; redirect_url: string };
+    const transaction = await createTransaction(bodyTransaction);
 
     setDataCheckout(bodyTransaction);
     setSnapToken(transaction.token || null);
@@ -129,65 +129,69 @@ const Keranjang = () => {
             </tr>
           </thead>
           <tbody>
-            {data.data.map(({ id, barang }, index) => {
-              return (
-                <tr key={index}>
-                  <td>
-                    <input type="checkbox" onClick={totalHargaHandler} ref={(el) => (refCheck.current[index] = el)} />
-                  </td>
-                  <td>
-                    <div className="row">
-                      <div className="col-4">
-                        <img src={barang.image} className="img-fluid rounded-start" alt={barang.name} />
-                      </div>
-                      <div className="col-8">
-                        <div className="card-body">
-                          <h5 className="card-title">{barang.name}</h5>
-                          <p className="card-text">{barang.description} ...</p>
+            {loading ? (
+              <Spinner animation="border" style={{ position: "absolute", top: "50%", left: "50%" }} />
+            ) : (
+              data.data.map(({ id, barang }, index) => {
+                return (
+                  <tr key={index}>
+                    <td>
+                      <input type="checkbox" onClick={totalHargaHandler} ref={(el) => (refCheck.current[index] = el)} />
+                    </td>
+                    <td>
+                      <div className="row">
+                        <div className="col-4">
+                          <img src={barang.image} className="img-fluid rounded-start" alt={barang.name} />
+                        </div>
+                        <div className="col-8">
+                          <div className="card-body">
+                            <h5 className="card-title">{barang.name}</h5>
+                            <p className="card-text">{barang.description} ...</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="text-center">
-                    <p>{barang.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</p>
-                  </td>
-                  <td className="text-center">
-                    <input
-                      type="number"
-                      className="form-control"
-                      defaultValue={1}
-                      min={1}
-                      max={99}
-                      onChange={(e) => {
-                        onChangeQuantity(parseInt(e.currentTarget.value), index);
-                        totalHargaHandler();
-                      }}
-                      ref={(el) => (refQuantity.current[index] = el)}
-                      style={{ width: 65 }}
-                    />
-                  </td>
-                  <td className="text-center">
-                    <p>
-                      <span ref={(el) => (refTotal.current[index] = el)}>{barang.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</span>
-                    </p>
-                  </td>
-                  <td className="text-center">
-                    <OverlayTrigger overlay={<Tooltip>Hapus</Tooltip>}>
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        onClick={() => {
-                          deletHandler(barang.id, index);
+                    </td>
+                    <td className="text-center">
+                      <p>{barang.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</p>
+                    </td>
+                    <td className="text-center">
+                      <input
+                        type="number"
+                        className="form-control"
+                        defaultValue={1}
+                        min={1}
+                        max={99}
+                        onChange={(e) => {
+                          onChangeQuantity(parseInt(e.currentTarget.value), index);
                           totalHargaHandler();
                         }}
-                      >
-                        <i className="fas fa-times" />
-                      </Button>
-                    </OverlayTrigger>
-                  </td>
-                </tr>
-              );
-            })}
+                        ref={(el) => (refQuantity.current[index] = el)}
+                        style={{ width: 65 }}
+                      />
+                    </td>
+                    <td className="text-center">
+                      <p>
+                        <span ref={(el) => (refTotal.current[index] = el)}>{barang.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</span>
+                      </p>
+                    </td>
+                    <td className="text-center">
+                      <OverlayTrigger overlay={<Tooltip>Hapus</Tooltip>}>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => {
+                            deletHandler(barang.id, index);
+                            totalHargaHandler();
+                          }}
+                        >
+                          <i className="fas fa-times" />
+                        </Button>
+                      </OverlayTrigger>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </Table>
         <Card>
@@ -230,7 +234,7 @@ Keranjang.navigation = Navigation;
 export const getServerSideProps: GetServerSideProps = withSession(async (context: GetServerSidePropsContextWithSession) => {
   return {
     props: {
-      token: context.req.session.get("token"),
+      token: context.req.session.get("token") || null,
     },
   };
 });

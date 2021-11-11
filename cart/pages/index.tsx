@@ -125,7 +125,7 @@ Index.navigation = Navigation;
 export const getServerSideProps: GetServerSideProps = withSession(async (context: GetServerSidePropsContextWithSession) => {
   return {
     props: {
-      token: context.req.session.get("token"),
+      token: context.req.session.get("token") || null,
     },
   };
 });

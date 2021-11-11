@@ -1,15 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import axios from "axios";
+import useSWR, { SWRResponse } from "swr";
+import { fetcher, infoType, dataBarangType } from ".";
 
-import { dataBarangType, errorType, infoType, loadingType } from ".";
-import { useUtils } from "../context";
+type dataKeranjangType = {
+  id: string;
+  createdAt: Date;
+  barang: dataBarangType;
+};
 
-type stateKeranjang = {
-  data: {
-    id: string;
-    createdAt: Date;
-    barang: dataBarangType;
-  }[];
+type responseKeranjangType = {
   info: infoType;
+  data: dataKeranjangType[];
+};
+
+type queryType = {
+  limit?: number;
+  offset?: number;
+  search?: string;
 };
 
 type bodyTransaction = {
@@ -24,59 +32,49 @@ type bodyTransaction = {
   }[];
 };
 
-export const useKeranjang = () => {
-  const { axios } = useUtils();
-  const [data, setData] = useState<stateKeranjang>({
-    data: [],
-    info: {
-      limit: 10,
-      offset: 0,
-      total: 0,
+export const useKeranjang = (token: string) => {
+  const [query, setQuery] = useState<queryType>({ limit: 10, offset: 0 });
+  const { data, error, mutate } = useSWR(`http://localhost:4000/keranjang?${new URLSearchParams(query as any).toString()}`, (url) =>
+    fetcher(url, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+  ) as SWRResponse<responseKeranjangType, Error>;
+
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:4000/",
+    headers: {
+      Authorization: "Bearer " + token,
     },
   });
-  const [loading, setLoading] = useState<loadingType>(false);
-  const [error, setError] = useState<errorType>(false);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get("/keranjang");
-        setLoading(false);
-        setData(res.data);
-      } catch (error) {
-        setLoading(false);
-        if (error.response) setError(`${error.response.status} ${error.response.statusText}`);
-        setError("something went wrong");
-      }
-    })();
-  }, []);
 
   const removeFromKeranjang = async (id: string) => {
     try {
-      await axios.delete(`/keranjang/${id}`);
+      const response = await axiosInstance.delete(`/keranjang/${id}`);
+      return response.data;
     } catch (error) {
-      console.log(error.response);
+      throw error;
     }
   };
 
-  const createTransaction = async (payload: bodyTransaction) => {
+  const createTransaction = async (payload: bodyTransaction): Promise<{ token: string; redirect_url: string }> => {
     try {
-      const response = await axios.post(`/keranjang/transaction`, payload);
+      const response = await axiosInstance.post(`/keranjang/transaction`, payload);
       return response.data.data;
     } catch (error) {
-      console.log(error.response);
+      throw error;
     }
   };
 
-  const transactionSuccess = async (payload) => {
+  const transactionSuccess = async (payload: object) => {
     try {
-      const response = await axios.post(`/checkout`, payload);
+      const response = await axiosInstance.post(`/checkout`, payload);
       return response.data.data;
     } catch (error) {
-      console.log(error.response);
+      throw error;
     }
   };
 
-  return { data, loading, error, removeFromKeranjang, createTransaction, transactionSuccess };
+  return { data, loading: !error && !data, error, mutate, setQuery, removeFromKeranjang, createTransaction, transactionSuccess };
 };

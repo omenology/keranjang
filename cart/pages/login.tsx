@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -18,25 +18,25 @@ const Login = (props) => {
     formState: { errors },
   } = useForm();
   const router = useRouter();
-  const { state, login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = (data: { identifier: string; password: string }): void => {
+  const onSubmit = async (data: { identifier: string; password: string }) => {
+    setLoading(true);
     const payloadLogin = {
       ...emailOrUsername(data.identifier),
       password: data.password,
     };
-
-    axios
-      .post("/api/auth/login", {
+    try {
+      const res = await axios.post("/api/auth/login", {
         payload: payloadLogin,
-      })
-      .then((res) => {
-        console.log(res);
-        login(payloadLogin);
-      })
-      .catch((err) => {
-        console.log(err);
       });
+
+      setLoading(false);
+      router.push("/");
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -82,7 +82,7 @@ const Login = (props) => {
         </div>
         <div className="d-grid gap-2">
           <Button type="submit" size="lg" variant="dark" style={{ borderRadius: "0 0 15px 15px" }}>
-            {state.loading ? <Spinner animation="border" variant="light" /> : "SIGN IN"}
+            {loading ? <Spinner animation="border" variant="light" /> : "SIGN IN"}
           </Button>
         </div>
       </form>

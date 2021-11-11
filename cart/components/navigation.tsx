@@ -1,15 +1,14 @@
-import React, { useRef, useEffect, BaseSyntheticEvent } from "react";
+import React, { useRef, BaseSyntheticEvent } from "react";
 import { useRouter } from "next/router";
 
 import { Dropdown } from "react-bootstrap";
-import { useAuth } from "../context";
 import css from "../styles/main.module.css";
 import Chat from "./chat";
+import axios from "axios";
 
 const Navigation = ({ children, token }) => {
   const navEl = useRef(null);
   const router = useRouter();
-  const { logout } = useAuth();
 
   const clickHandler = (e: BaseSyntheticEvent) => {
     for (const el of navEl.current.children) {
@@ -17,6 +16,16 @@ const Navigation = ({ children, token }) => {
     }
     e.currentTarget.classList.add(`${css.active}`);
   };
+
+  const logoutHandler = () =>
+    axios
+      .get("api/auth/logout")
+      .then((res) => {
+        router.push("/login");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
   return (
     <React.Fragment>
@@ -64,7 +73,7 @@ const Navigation = ({ children, token }) => {
               <Dropdown.Item>
                 <i className="fas fa-user-circle" /> Profile
               </Dropdown.Item>
-              <Dropdown.Item onClick={logout}>
+              <Dropdown.Item onClick={logoutHandler}>
                 <i className="fas fa-sign-out-alt" /> Logout
               </Dropdown.Item>
             </Dropdown.Menu>

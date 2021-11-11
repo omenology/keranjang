@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import ironStore from "iron-store";
 
 export const middleware = async (req: NextRequest) => {
-  // const tes = await ironStore({
-  //   sealed: req.cookies["next-iron-session/examples/next.js"],
-  //   password: "asdjaskldjlkasjdlkasjdlasjdasdasdasdasdasdasdasdasdasdad",
-  // });
-
-  // console.log("middleware");
-
-  return NextResponse.next();
+  if (req.nextUrl.pathname.split("/")[1] == "api") return NextResponse.next();
+  switch (req.nextUrl.pathname) {
+    case "/login":
+    case "/forget":
+    case "/register":
+      if (req.cookies["iron-session"]) return NextResponse.redirect("/");
+      return NextResponse.next();
+    default:
+      if (req.cookies["iron-session"]) return NextResponse.next();
+      return NextResponse.redirect("/login");
+  }
 };
