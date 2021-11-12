@@ -8,8 +8,8 @@ import { Card, Spinner, Image } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Container from "../components/container";
 
-const Riwayat = () => {
-  const { data, isLoading } = useCheckout();
+const Riwayat = ({ token }) => {
+  const { data, isLoading } = useCheckout(token);
 
   console.log(data);
 

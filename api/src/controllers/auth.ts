@@ -64,3 +64,15 @@ export const login = async (req: Request, res: Response) => {
     res.status(error.statusCode || 500).send({ message: error.message });
   }
 };
+
+export const refreshToken = (req: Request, res: Response) => {
+  try {
+    const token = generateToken({ email: req.decoded.email, username: req.decoded.username, userId: req.decoded.userId });
+
+    return res.status(200).send({ data: { token } });
+  } catch (err: any) {
+    const error: HttpError = err;
+    logger.error(error);
+    res.status(error.statusCode || 500).send({ message: error.message });
+  }
+};

@@ -3,12 +3,13 @@ import barangRoute from "./barang";
 import userRoute from "./user";
 import keranjangRoute from "./keranjang";
 import checkoutRoute from "./checkout";
-import { login } from "../controllers";
+import { login, refreshToken, isAuth } from "../controllers";
 import { sendMail } from "src/helpers/nodemailer";
 
 const route = Router({ mergeParams: true });
 
 route.post("/login", login);
+route.get("/refreshtoken", isAuth, refreshToken);
 route.use("/barang", barangRoute);
 route.use("/user", userRoute);
 route.use("/keranjang", keranjangRoute);
