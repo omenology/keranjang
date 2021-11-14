@@ -26,6 +26,11 @@ export default sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   { tableName: "user", timestamps: true, paranoid: true, freezeTableName: true }
 );

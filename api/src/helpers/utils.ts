@@ -8,9 +8,9 @@ import { LOG_DIR, MIDTRANS_CLIENT_KEY, MIDTRANS_SERVER_KEY } from "./constant";
 
 // sync db with model
 export const syncModels = async () => {
-  // await user.sync({ force: true });
-  // await barang.sync({ force: true });
-  // await keranjang.sync({ force: true });
+  await user.sync({ force: true });
+  await barang.sync({ force: true });
+  await keranjang.sync({ force: true });
   await checkout.sync({ force: true });
 };
 
