@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { FloatingLabel, Button, Form, Spinner } from "react-bootstrap";
 
-import { useAuth } from "../context";
 import LoginWraper from "../components/loginWraper";
 
 import css from "../styles/login.module.css";
+import { payloadRegister } from "../utils";
 
 const Register = (props) => {
   const {
@@ -17,11 +18,18 @@ const Register = (props) => {
     getValues,
   } = useForm();
   const router = useRouter();
-  const { register: registerUser, state } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = (data): void => {
+  const onSubmit = async (data: payloadRegister) => {
     console.log(data);
-    registerUser(data);
+    try {
+      setLoading(true);
+      await axios.post("http://localhost:4000/user/", data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   const isEmail = (str: string): boolean => {
@@ -96,7 +104,7 @@ const Register = (props) => {
         </div>
         <div className="d-grid gap-2">
           <Button type="submit" size="lg" variant="dark" style={{ borderRadius: "0 0 15px 15px" }}>
-            {state.loading ? <Spinner animation="border" variant="light" /> : "SUBMIT"}
+            {loading ? <Spinner animation="border" variant="light" /> : "SUBMIT"}
           </Button>
         </div>
       </form>

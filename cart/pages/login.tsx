@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { FloatingLabel, Button, Form, Spinner } from "react-bootstrap";
 
-import { useAuth } from "../context";
 import { emailOrUsername } from "../utils";
 import LoginWraper from "../components/loginWraper";
 

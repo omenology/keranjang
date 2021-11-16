@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Router } from "next/router";
 import NProgress from "nprogress";
-import { GlobalProvider } from "../context";
 
 import "nprogress/nprogress.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -24,13 +23,11 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <GlobalProvider>
-      <Wrapper>
-        <Navigation {...pageProps}>
-          <Component {...pageProps} />
-        </Navigation>
-      </Wrapper>
-    </GlobalProvider>
+    <Wrapper>
+      <Navigation {...pageProps}>
+        <Component {...pageProps} />
+      </Navigation>
+    </Wrapper>
   );
 }
 
