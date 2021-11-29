@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import httpError, { HttpError } from "http-errors";
 
-import { logger } from "src/helpers/utils";
+import { logger } from "../helpers/utils";
 import { user } from "../data/models";
-import { sendMail } from "src/helpers/nodemailer";
+import { sendMail } from "../helpers/nodemailer";
 
 // validation body request
 const bodySchema = Joi.object({

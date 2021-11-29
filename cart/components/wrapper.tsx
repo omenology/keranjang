@@ -1,12 +1,17 @@
+import axios from "axios";
 import React from "react";
 
-const Wrapper = (props) => {
+const Wrapper = ({ children, token }) => {
   React.useEffect(() => {
-    //isLogin();
-    console.log("wraper");
+    if (token)
+      axios.get("http://localhost:4000/refreshtoken", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
   }, []);
 
-  return props.children;
+  return children;
 };
 
 export default Wrapper;

@@ -3,7 +3,7 @@ import Joi from "joi";
 import httpError, { HttpError } from "http-errors";
 import { randomBytes } from "crypto";
 
-import { logger, snap } from "src/helpers/utils";
+import { logger, snap } from "../helpers/utils";
 import { keranjang, barang } from "../data/models";
 
 export const addToKeranjang = async (req: Request, res: Response) => {

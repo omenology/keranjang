@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <Wrapper>
+    <Wrapper {...pageProps}>
       <Navigation {...pageProps}>
         <Component {...pageProps} />
       </Navigation>
