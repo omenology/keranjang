@@ -33,6 +33,10 @@ const orderQuery = Joi.object({
     .uppercase()
     .empty("")
     .custom((val) => (val == "DESC" ? "DESC" : "ASC")),
+  createdAt: Joi.string()
+    .uppercase()
+    .empty("")
+    .custom((val) => (val == "DESC" ? "DESC" : "ASC")),
 }).options({ stripUnknown: true });
 
 const tryJsonParse = (jsonStringify: string) => {

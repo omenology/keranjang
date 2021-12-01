@@ -11,7 +11,7 @@ export default withSession(async (req: RequestWithSession, res: NextApiResponse)
 
     await req.session.save();
 
-    res.status(resLogin.status).json({ data: resLogin.data });
+    res.status(resLogin.status).json({ data: resLogin.data.data });
   } catch (err) {
     if (err.response) res.status(err.response.status).json({ data: err.response.data });
     res.status(500).send({ message: "something went wrong" });

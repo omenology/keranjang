@@ -20,6 +20,7 @@ type queryType = {
   limit?: number;
   offset?: number;
   search?: string;
+  order?: object;
 };
 
 type payloadBarang = {
@@ -31,7 +32,9 @@ type payloadBarang = {
 
 export const useBarang = (token: string) => {
   const [query, setQuery] = useState<queryType>({ limit: 9, offset: 0 });
-  const { data, error, mutate } = useSWR(`http://localhost:4000/barang?${new URLSearchParams(query as any).toString()}`, (url) =>
+  const cleanQuery = { ...query, ...query?.order };
+  delete cleanQuery.order;
+  const { data, error, mutate } = useSWR(`http://localhost:4000/barang?${new URLSearchParams(cleanQuery as any).toString()}`, (url) =>
     fetcher(url, {
       headers: {
         Authorization: "Bearer " + token,
@@ -67,5 +70,5 @@ export const useBarang = (token: string) => {
     }
   };
 
-  return { data, loading: !error && !data, error, mutate, setQuery, addBarang, addToKeranjang };
+  return { data, loading: !error && !data, error, mutate, query, setQuery, addBarang, addToKeranjang };
 };

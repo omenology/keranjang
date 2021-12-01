@@ -20,6 +20,7 @@ const Keranjang = ({ token }) => {
   const [reRender, setRerender] = useState(true);
   const [snap, setSnap] = useState(undefined);
   const [snapToken, setSnapToken] = useState("");
+  const [snapReload, setSnapReload] = useState(false);
   const [dataCheckout, setDataCheckout] = useState({});
   const { data, loading, error, removeFromKeranjang, createTransaction, transactionSuccess } = useKeranjang(token);
 
@@ -85,12 +86,12 @@ const Keranjang = ({ token }) => {
   useEffect(() => {
     if (!(window as any).snap) {
       setTimeout(() => {
-        setRerender(!reRender);
+        setSnapReload(!snapReload);
       }, 1000);
     } else {
       setSnap((window as any).snap);
     }
-  }, [(window as any).snap]);
+  }, [snapReload]);
 
   useEffect(() => {
     if (snap && snapToken)

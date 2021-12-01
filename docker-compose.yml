@@ -33,3 +33,12 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  soketio:
+    image: soketio
+    build: 
+      dockerfile: ./soketio/Dockerfile
+      target: base
+    restart: always
+    ports:
+      - 4001:4001
