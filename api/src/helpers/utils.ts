@@ -1,10 +1,27 @@
+import { NextFunction, Request, Response } from "express";
 import cron from "node-cron";
 import morgan from "morgan";
 import { createLogger, format, transports } from "winston";
 import "winston-daily-rotate-file";
 import { Snap } from "midtrans-client";
+import httpError, { HttpError } from "http-errors";
+import jwtDecode from "jwt-decode";
 import { user, barang, keranjang, checkout } from "../data/models";
 import { LOG_DIR, MIDTRANS_CLIENT_KEY, MIDTRANS_SERVER_KEY } from "./constant";
+
+type decodedToken = {
+  userId: string;
+  username: string;
+  email: string;
+};
+
+declare global {
+  namespace Express {
+    interface Request {
+      decoded: decodedToken;
+    }
+  }
+}
 
 // sync db with model
 export const syncModels = async () => {
@@ -53,3 +70,23 @@ export const snap = new Snap({
   clientKey: MIDTRANS_CLIENT_KEY,
   serverKey: MIDTRANS_SERVER_KEY,
 });
+
+export const decodeToken = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const authorization = req.headers.authorization || req.header("Authorization");
+
+    if (!authorization) throw httpError(401);
+
+    const [type, token] = authorization?.split(" ");
+    if (!type || !token) throw httpError(401);
+    const decoded = jwtDecode(token) as decodedToken;
+
+    req.decoded = decoded;
+    next();
+  } catch (err: any) {
+    const error: HttpError = err;
+    logger.error(error);
+
+    res.status(error.name == "InvalidTokenError" ? 400 : error.statusCode || 500).send({ message: error.message });
+  }
+};

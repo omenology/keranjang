@@ -35,46 +35,46 @@ services:
     ports:
       - 8080:8080
       
-  api-re:
-    image: api-re
-    build: 
-      dockerfile: ./api/Dockerfile
-      target: base
-    restart: always
-    ports:
-      - 4000:4000
-    depends_on:
-      - db
+  # api:
+  #   image: api
+  #   build: 
+  #     dockerfile: ./api/Dockerfile
+  #     target: base
+  #   restart: always
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     - db
 
-  soketio:
-    image: soketio
-    build: 
-      dockerfile: ./soketio/Dockerfile
-      target: production
-    restart: always
-    ports:
-      - 4001:4001
+  # soketio:
+  #   image: soketio
+  #   build: 
+  #     dockerfile: ./soketio/Dockerfile
+  #     target: production
+  #   restart: always
+  #   ports:
+  #     - 4001:4001
   
-  upload-ser:
-    image: upload-ser
-    build: 
-      dockerfile: ./upload/Dockerfile
-      target: production
-    restart: always
-    ports:
-      - 4002:4002
+  # upload:
+  #   image: upload
+  #   build: 
+  #     dockerfile: ./upload/Dockerfile
+  #     target: production
+  #   restart: always
+  #   ports:
+  #     - 4002:4002
   
-  proxy:
-    image: proxy
-    build: 
-      context: ./proxy
-      dockerfile: Dockerfile
-      target: base
-    restart: always
-    ports:
-      - 80:80
-    depends_on:
-      - api-re
+  # proxy:
+  #   image: proxy
+  #   build: 
+  #     context: ./proxy
+  #     dockerfile: Dockerfile
+  #     target: base
+  #   restart: always
+  #   ports:
+  #     - 80:80
+  #   depends_on:
+  #     - api-re
   
   
 

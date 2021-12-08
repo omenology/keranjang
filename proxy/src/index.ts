@@ -28,6 +28,6 @@ app.use("*", (req, res) => {
   res.status(404).send("Endpoint Not Found");
 });
 
-const server = app.listen(80, () => {
-  console.log(`Service start on port : ${80}`);
+const server = app.listen(5000, () => {
+  console.log(`Service start on port : ${5000}`);
 });

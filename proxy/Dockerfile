@@ -3,7 +3,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /usr/app
 ADD . .
 RUN yarn install --immutable 
-EXPOSE 80
+EXPOSE 5000
 RUN chown -R node /usr/app
 USER node
 CMD yarn run dev 
@@ -12,5 +12,5 @@ CMD yarn run dev
 FROM base as production
 RUN yarn run build 
 RUN yarn install --production=true --pure-lockfile
-EXPOSE 80
+EXPOSE 5000
 CMD yarn run start

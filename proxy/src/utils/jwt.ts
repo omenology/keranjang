@@ -6,6 +6,14 @@ import { TOKEN_LIFE, TOKEN_SECREAT } from "./constants";
 
 type payload = { userId: string; username: string; email: string };
 
+declare global {
+  namespace Express {
+    interface Request {
+      decoded: payload;
+    }
+  }
+}
+
 export const generateToken = (payload: payload): string => {
   return jwt.sign(payload, TOKEN_SECREAT, { expiresIn: `${TOKEN_LIFE}h` });
 };
@@ -21,8 +29,9 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     const [type, token] = authorization?.split(" ");
     if (!type || !token) throw httpError(401);
 
-    jwt.verify(token, TOKEN_SECREAT, (err) => {
+    jwt.verify(token, TOKEN_SECREAT, (err, decoded) => {
       if (err) throw httpError(401, err);
+      req.decoded = decoded as payload;
       return next();
     });
   } catch (err: any) {
