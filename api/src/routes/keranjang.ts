@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { addToKeranjang, deletBarangFromKeranjang, getKeranjang, isAuth, createTransaction } from "../controllers";
+import { addToKeranjang, deletBarangFromKeranjang, getKeranjang, createTransaction } from "../controllers";
 
 const route = Router({ mergeParams: true });
 
-route.get("/", isAuth, getKeranjang);
-route.post("/transaction", isAuth, createTransaction);
-route.post("/:id", isAuth, addToKeranjang);
-route.delete("/:id", isAuth, deletBarangFromKeranjang);
+route.get("/", getKeranjang);
+route.post("/transaction", createTransaction);
+route.post("/:id", addToKeranjang);
+route.delete("/:id", deletBarangFromKeranjang);
 
 export default route;
