@@ -27,18 +27,54 @@ services:
     environment:
       POSTGRES_USER: tes
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: development_db
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+      
+  api-re:
+    image: api-re
+    build: 
+      dockerfile: ./api/Dockerfile
+      target: base
+    restart: always
+    ports:
+      - 4000:4000
+    depends_on:
+      - db
 
   soketio:
     image: soketio
     build: 
       dockerfile: ./soketio/Dockerfile
-      target: base
+      target: production
     restart: always
     ports:
       - 4001:4001
+  
+  upload-ser:
+    image: upload-ser
+    build: 
+      dockerfile: ./upload/Dockerfile
+      target: production
+    restart: always
+    ports:
+      - 4002:4002
+  
+  proxy:
+    image: proxy
+    build: 
+      context: ./proxy
+      dockerfile: Dockerfile
+      target: base
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - api-re
+  
+  
+

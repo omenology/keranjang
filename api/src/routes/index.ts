@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authRoute from "./auth";
 import barangRoute from "./barang";
 import userRoute from "./user";
 import keranjangRoute from "./keranjang";
@@ -8,7 +9,7 @@ import { sendMail } from "src/helpers/nodemailer";
 
 const route = Router({ mergeParams: true });
 
-route.post("/login", login);
+route.use("/auth", authRoute);
 route.get("/refreshtoken", isAuth, refreshToken);
 route.use("/barang", barangRoute);
 route.use("/user", userRoute);

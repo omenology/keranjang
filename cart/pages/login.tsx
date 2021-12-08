@@ -34,8 +34,9 @@ const Login = (props) => {
       setLoading(false);
       router.push("/");
     } catch (error) {
-      setAlert({ type: "danger", message: error.response.message || error.response.data.data.message });
+      setAlert({ type: "danger", message: error.response?.data?.data?.message || error.response.data.message });
       setLoading(false);
+      console.log(error.response);
     }
   };
 

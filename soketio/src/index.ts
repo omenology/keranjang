@@ -9,14 +9,16 @@ interface ISocket extends Socket {
 
 const server = http.createServer();
 const io = new Server(server, {
+  path: "/api-socket",
   cors: {
-    origin: "*",
+    origin: ["http://localhost"],
   },
 });
 
 const onlineUsers = new Set();
 
 io.use(async (socket: ISocket, next) => {
+  console.log(socket.handshake.headers);
   const token = socket.handshake.auth.token as string;
   const decoded = verifyToken(token);
   if (decoded.error) next(decoded.error);

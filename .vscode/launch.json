@@ -7,8 +7,8 @@
             "preLaunchTask": "docker-run: debug",
             "platform": "node",
             "node": {
-                "package": "${workspaceFolder}/soketio/package.json",
-                "localRoot": "${workspaceFolder}/soketio"
+                "package": "${workspaceFolder}/proxy/package.json",
+                "localRoot": "${workspaceFolder}/proxy"
             }
         }
     ]

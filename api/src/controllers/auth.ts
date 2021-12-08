@@ -44,6 +44,7 @@ export const login = async (req: Request, res: Response) => {
     })
       .xor("email", "username")
       .validate(req.body);
+    console.log(req.body);
     if (body.error) throw httpError(400, body.error);
 
     const data = await user.findOne({

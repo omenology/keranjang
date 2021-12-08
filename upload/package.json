@@ -8,7 +8,6 @@
     "@types/multer": "^1.4.7",
     "@types/node": "^16.3.2",
     "nodemon": "^2.0.7",
-    "tsconfig-paths": "^3.11.0",
     "typescript": "^4.3.4"
   },
   "dependencies": {
@@ -20,7 +19,8 @@
     "multer": "^1.4.2",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
-    "ts-node": "^10.4.0"
+    "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.12.0"
   },
   "name": "service-upload",
   "version": "1.0.0",
@@ -28,7 +28,8 @@
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/index.ts",
-    "build": "tsc -p ."
+    "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/upload/src/index.js",
+    "build": "tsc -p tsconfig.json"
   },
   "keywords": [
     "upload",

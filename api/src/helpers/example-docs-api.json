@@ -1,20 +1,80 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
-    "description": "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
+    "description": "Sed vel mollis lectus, quis rutrum augue. Etiam mattis volutpat hendrerit. Suspendisse nulla ex, tincidunt ac metus sed, tempor ultrices dolor. Integer eget egestas diam, blandit finibus nisl. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse potenti. Maecenas sit amet turpis iaculis, fringilla quam vitae, mattis erat. Nam ut ullamcorper ligula. Nulla auctor semper dignissim. Pellentesque nec eros hendrerit dolor scelerisque porttitor non sed sapien. Nullam aliquam bibendum quam vel vulputate. Nunc non mi risus.",
     "version": "1.0.0",
-    "title": "Swagger Petstore",
+    "title": "API Documentation",
     "contact": { "email": "ikballukmanulhakim5@gmail.com" }
   },
-  "host": "petstore.swagger.io",
-  "basePath": "/v2",
-  "tags": [
-    { "name": "pet", "description": "Everything about your Pets", "externalDocs": { "description": "Find out more", "url": "http://swagger.io" } },
-    { "name": "store", "description": "Access to Petstore orders" },
-    { "name": "user", "description": "Operations about user", "externalDocs": { "description": "Find out more about our store", "url": "http://swagger.io" } }
+  "servers": [
+    {
+      "url": "http://localhost:4000/",
+      "description": "Local Server"
+    }
   ],
-  "schemes": ["https", "http"],
+  "tags": [
+    { "name": "auth", "description": "mengenai login, register, dan lupa password" },
+    { "name": "user", "description": "Operations about user" },
+    { "name": "barang", "description": "Hal hal mengenai CRUD barang" },
+    { "name": "keranjang", "description": "Hal hal mengenai CRUD keranjang" },
+    { "name": "checkout", "description": "Hal hal mengenai riwayat ransaksi" }
+  ],
   "paths": {
+    "/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Login",
+        "description": "Login untuk mengakses API",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "user1"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "required": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsMkBtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjIiLCJ1c2VySWQiOiJlYzE0YjExZS05MTU1LTQ0NDEtYjlhNy0zNjFmYTRiZTJmNWQiLCJpYXQiOjE2Mzg1MTk4NTYsImV4cCI6MTYzODU0ODY1Nn0.F1HiKhvweR8QK2npzbqi-KipV_Rx_ibcnhnTfYmGTsw"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error authorized failed",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "password required"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/pet/{petId}/uploadImage": {
       "post": {
         "tags": ["pet"],
@@ -29,7 +89,7 @@
           { "name": "file", "in": "formData", "description": "file to upload", "required": false, "type": "file" }
         ],
         "responses": { "200": { "description": "successful operation", "schema": { "$ref": "#/definitions/ApiResponse" } } },
-        "security": [{ "petstore_auth": ["write:pets", "read:pets"] }]
+        "security": [{ "bearerAuth": [] }]
       }
     },
     "/pet": {
@@ -292,58 +352,124 @@
       }
     }
   },
-  "securityDefinitions": {
-    "api_key": { "type": "apiKey", "name": "api_key", "in": "header" },
-    "petstore_auth": {
-      "type": "oauth2",
-      "authorizationUrl": "https://petstore.swagger.io/oauth/authorize",
-      "flow": "implicit",
-      "scopes": { "read:pets": "read your pets", "write:pets": "modify pets in your account" }
-    }
-  },
-  "definitions": {
-    "ApiResponse": { "type": "object", "properties": { "code": { "type": "integer", "format": "int32" }, "type": { "type": "string" }, "message": { "type": "string" } } },
-    "Category": { "type": "object", "properties": { "id": { "type": "integer", "format": "int64" }, "name": { "type": "string" } }, "xml": { "name": "Category" } },
-    "Pet": {
-      "type": "object",
-      "required": ["name", "photoUrls"],
-      "properties": {
-        "id": { "type": "integer", "format": "int64" },
-        "category": { "$ref": "#/definitions/Category" },
-        "name": { "type": "string", "example": "doggie" },
-        "photoUrls": { "type": "array", "xml": { "wrapped": true }, "items": { "type": "string", "xml": { "name": "photoUrl" } } },
-        "tags": { "type": "array", "xml": { "wrapped": true }, "items": { "xml": { "name": "tag" }, "$ref": "#/definitions/Tag" } },
-        "status": { "type": "string", "description": "pet status in the store", "enum": ["available", "pending", "sold"] }
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ffec0b55-e780-4256-bad4-16fd013e6bac"
+          },
+          "username": {
+            "type": "string",
+            "example": "john"
+          },
+          "email": {
+            "type": "string",
+            "example": "email@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "test"
+          },
+          "active": {
+            "type": "boolean",
+            "example": true
+          }
+        }
       },
-      "xml": { "name": "Pet" }
+      "barang": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ffec0b55-e780-4256-bad4-16fd013e6bac"
+          },
+          "name": {
+            "type": "string",
+            "example": "nama barang"
+          },
+          "price": {
+            "type": "integer",
+            "example": 100
+          },
+          "description": {
+            "type": "string",
+            "example": "description barang "
+          },
+          "image": {
+            "type": "string",
+            "format": "url",
+            "example": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png"
+          }
+        }
+      },
+      "keranjang": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ffec0b55-e780-4256-bad4-16fd013e6bac"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "barang": {
+            "$ref": "#/components/schemas/barang"
+          }
+        }
+      },
+      "checkout": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ffec0b55-e780-4256-bad4-16fd013e6bac"
+          },
+          "orderId": {
+            "type": "string",
+            "example": "oreder-12121"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/barang"
+            }
+          },
+          "totalPayment": {
+            "type": "integer",
+            "example": 100
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "shippingAddress": {
+            "type": "string",
+            "example": "address"
+          },
+          "reciver": {
+            "type": "string",
+            "example": "nama"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "pendding"
+          }
+        }
+      }
     },
-    "Tag": { "type": "object", "properties": { "id": { "type": "integer", "format": "int64" }, "name": { "type": "string" } }, "xml": { "name": "Tag" } },
-    "Order": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "integer", "format": "int64" },
-        "petId": { "type": "integer", "format": "int64" },
-        "quantity": { "type": "integer", "format": "int32" },
-        "shipDate": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "description": "Order Status", "enum": ["placed", "approved", "delivered"] },
-        "complete": { "type": "boolean" }
-      },
-      "xml": { "name": "Order" }
-    },
-    "User": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "integer", "format": "int64" },
-        "username": { "type": "string" },
-        "firstName": { "type": "string" },
-        "lastName": { "type": "string" },
-        "email": { "type": "string" },
-        "password": { "type": "string" },
-        "phone": { "type": "string" },
-        "userStatus": { "type": "integer", "format": "int32", "description": "User Status" }
-      },
-      "xml": { "name": "User" }
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+      }
     }
-  },
-  "externalDocs": { "description": "Find out more about Swagger", "url": "http://swagger.io" }
+  }
 }

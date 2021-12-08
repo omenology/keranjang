@@ -34,19 +34,6 @@ export const getAllUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getMyself = async (req: Request, res: Response) => {
-  try {
-    const data = await user.findByPk(req.decoded.userId);
-    if (!data) return res.sendStatus(204);
-
-    return res.status(200).send({ data });
-  } catch (err: any) {
-    const error: HttpError = err;
-    logger.error(error);
-    res.status(error.statusCode || 500).send({ message: error.message });
-  }
-};
-
 export const createUser = async (req: Request, res: Response) => {
   try {
     const body = bodySchema.validate(req.body);
