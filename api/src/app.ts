@@ -35,7 +35,7 @@ app.use(morganMiddleware);
 app.use("/", routes);
 
 // route documentation
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(exampleSwagger));
+app.use("/documentation", swaggerUI.serve, swaggerUI.setup(exampleSwagger));
 
 // route not found
 app.use("*", (req, res) => {

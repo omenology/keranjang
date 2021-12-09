@@ -20,7 +20,7 @@
     { "name": "checkout", "description": "Hal hal mengenai riwayat ransaksi" }
   ],
   "paths": {
-    "/login": {
+    "/api/auth/login": {
       "post": {
         "tags": ["auth"],
         "summary": "Login",
@@ -68,6 +68,103 @@
               "application/json": {
                 "example": {
                   "message": "password required"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "register user",
+        "description": "membuat user baru",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "required": true
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "required": true
+                  }
+                },
+                "example": {
+                  "username": "user1",
+                  "email": "email1@mail.com",
+                  "password": "password1"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "ybbhg65ad657sa",
+                  "username": "user1",
+                  "email": "email1@mail.com",
+                  "password": "password1",
+                  "createdAt": "date format",
+                  "updatedAt": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error authorized failed",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "password required"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "error internal server",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "something went wrong"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/forget": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "forget password",
+        "description": "lupa password dikirim email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "required": true
+                  }
                 }
               }
             }

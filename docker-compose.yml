@@ -28,6 +28,8 @@ services:
       POSTGRES_USER: tes
       POSTGRES_PASSWORD: password
       POSTGRES_DB: development_db
+    volumes:
+      - ./tmp/postgres-data:/var/lib/postgresql/data
 
   adminer:
     image: adminer
