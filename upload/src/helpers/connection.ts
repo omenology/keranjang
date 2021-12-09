@@ -1,5 +1,7 @@
 import mongose from "mongoose";
 
-export default mongose.connect("mongodb://root:password@mongo", {
+import { USERNAME_DB, PASSWORD_DB, HOST_DB } from "./constant";
+
+export default mongose.connect(`mongodb://${USERNAME_DB}:${PASSWORD_DB}@${HOST_DB}`, {
   dbName: "upload-services",
 });

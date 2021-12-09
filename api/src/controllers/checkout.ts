@@ -5,7 +5,7 @@ import axios from "axios";
 
 import { logger } from "../helpers/utils";
 import { checkout } from "../data/models";
-import { MIDTRANS_SERVER_KEY } from "src/helpers/constant";
+import { MIDTRANS_SERVER_KEY } from "../helpers/constant";
 
 const bodySchema = Joi.object({
   order_id: Joi.string().required(),

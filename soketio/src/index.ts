@@ -1,10 +1,13 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
-
-import { verifyToken, payload } from "@jwt/index";
+import decodeToken from "jwt-decode";
 
 interface ISocket extends Socket {
-  decoded?: payload;
+  decoded?: {
+    userId: string;
+    username: string;
+    email: string;
+  };
 }
 
 const server = http.createServer();
@@ -19,10 +22,14 @@ const onlineUsers = new Set();
 
 io.use(async (socket: ISocket, next) => {
   console.log(socket.handshake.headers);
-  const token = socket.handshake.auth.token as string;
-  const decoded = verifyToken(token);
-  if (decoded.error) next(decoded.error);
-  socket.decoded = decoded.data as payload;
+
+  const authorization = socket.handshake.headers?.authorization;
+  if (!authorization) throw Error("Unauthorized");
+
+  const [type, token] = authorization?.split(" ");
+  if (!type || !token) throw Error("Unauthorized");
+
+  socket.decoded = decodeToken(token);
   next();
 });
 

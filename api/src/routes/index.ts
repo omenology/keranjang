@@ -4,8 +4,8 @@ import barangRoute from "./barang";
 import userRoute from "./user";
 import keranjangRoute from "./keranjang";
 import checkoutRoute from "./checkout";
-import { sendMail } from "src/helpers/nodemailer";
-import { decodeToken } from "src/helpers/utils";
+import { sendMail } from "../helpers/nodemailer";
+import { decodeToken } from "../helpers/utils";
 
 const route = Router({ mergeParams: true });
 

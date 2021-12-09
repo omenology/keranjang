@@ -3,7 +3,7 @@ import multer from "multer";
 import mime from "mime-types";
 import fs from "fs";
 import { Request, Response, NextFunction } from "express";
-import { verifyToken } from "@jwt/index";
+import decodeToken from "jwt-decode";
 
 export const APP_DIR = path.join(__dirname, "../");
 export const IMAGES_DIR = path.join(APP_DIR, "storage/images");
@@ -42,14 +42,16 @@ export const midUploadDocument = multer({
 });
 
 export const isAuth = (req: Request, res: Response, next: NextFunction) => {
-  const authorization = req.headers.authorization || req.header("Authorization");
-  if (!authorization) return res.status(400).send({ message: "Unauthorized" });
+  try {
+    const authorization = req.headers.authorization || req.header("Authorization");
+    if (!authorization) return res.status(400).send({ message: "Unauthorized" });
 
-  const [type, token] = authorization?.split(" ");
-  if (!type || !token) return res.status(400).send({ message: "Unauthorized" });
+    const [type, token] = authorization?.split(" ");
+    if (!type || !token) return res.status(400).send({ message: "Unauthorized" });
 
-  const decoded = verifyToken(token);
-  if (decoded.error) return res.status(400).send({ message: "Unauthorized" });
-
-  next();
+    decodeToken(token);
+    next();
+  } catch (err) {
+    return res.status((err as any).name == "InvalidTokenError" ? 400 : 500).send({ message: (err as any).message || "Something went wrong" });
+  }
 };

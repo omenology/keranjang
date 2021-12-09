@@ -3,8 +3,10 @@ import path from "path";
 export const APP_DIR = path.join(__dirname, "../");
 export const LOG_DIR = path.join(APP_DIR, "log");
 
-export const TOKEN_LIFE = process.env.TOKEN_LIFE || 8; // hour
-export const TOKEN_SECREAT = process.env.TOKEN_SECREAT || "tokenscreat123";
+export const POSTGRES_USER = process.env.POSTGRES_USER || "tes";
+export const POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD || "password";
+export const POSTGRES_HOST = process.env.POSTGRES_HOST || "localhost:5432";
+export const POSTGRES_DB = process.env.POSTGRES_DB || "development_db";
 
 export const HOST_SMTP = process.env.HOST_SMTP || "smtp.ethereal.email";
 export const PORT_SMTP = process.env.PORT_SMTP || 587;

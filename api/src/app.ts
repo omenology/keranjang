@@ -6,7 +6,7 @@ import swaggerUI from "swagger-ui-express";
 
 import routes from "./routes";
 import { syncModels, cronTask, morganMiddleware } from "./helpers/utils";
-const exampleSwagger = require("./helpers/example-docs-api.json");
+const docs = require("./helpers/docs-openapi.json");
 
 // checkout, histori, filter get
 // corn job
@@ -35,7 +35,7 @@ app.use(morganMiddleware);
 app.use("/", routes);
 
 // route documentation
-app.use("/documentation", swaggerUI.serve, swaggerUI.setup(exampleSwagger));
+app.use("/documentation", swaggerUI.serve, swaggerUI.setup(docs));
 
 // route not found
 app.use("*", (req, res) => {

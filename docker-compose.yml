@@ -28,8 +28,11 @@ services:
       POSTGRES_USER: tes
       POSTGRES_PASSWORD: password
       POSTGRES_DB: development_db
+      POSTGRES_HOST: db
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ./tmp/postgres-data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+
 
   adminer:
     image: adminer
@@ -77,6 +80,11 @@ services:
   #     - 80:80
   #   depends_on:
   #     - api-re
-  
+volumes:
+  pgdata:
+    external: true
+    name: pgdata  
+      
+
   
 
