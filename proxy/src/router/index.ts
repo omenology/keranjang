@@ -23,7 +23,7 @@ route.post("/api/auth/login", async (req: Request, res: Response) => {
     return res.status(500).json({ message: "something went wrong" });
   }
 });
-route.post("/api/auth/refreshtoken", verifyToken, async (req: Request, res: Response) => {
+route.get("/api/auth/refreshtoken", verifyToken, async (req: Request, res: Response) => {
   try {
     const token = generateToken({ userId: req.decoded?.userId, email: req.decoded?.email, username: req.decoded?.username });
     return res.status(200).json({ data: { token } });

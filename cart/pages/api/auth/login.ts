@@ -3,11 +3,11 @@ import { withSession, RequestWithSession, NextApiResponse } from "../../../utils
 
 export default withSession(async (req: RequestWithSession, res: NextApiResponse) => {
   try {
-    const resLogin = await axios.post("http://localhost:4000/login", {
+    const resLogin = await axios.post("http://localhost:5000/api/auth/login", {
       ...req.body.payload,
     });
-
     req.session.set("token", resLogin.data.data.token);
+    console.log("====");
 
     await req.session.save();
 

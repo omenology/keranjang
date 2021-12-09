@@ -40,46 +40,64 @@ services:
     ports:
       - 8080:8080
       
-  # api:
-  #   image: api
-  #   build: 
-  #     dockerfile: ./api/Dockerfile
-  #     target: base
-  #   restart: always
-  #   ports:
-  #     - 4000:4000
-  #   depends_on:
-  #     - db
+  api:
+    image: api
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+      target: base
+    restart: always
+    ports:
+      - 4000:4000
+    environment:
+      POSTGRES_USER: tes
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: development_db
+      POSTGRES_HOST: db
+    depends_on:
+      - db
 
-  # soketio:
-  #   image: soketio
-  #   build: 
-  #     dockerfile: ./soketio/Dockerfile
-  #     target: production
-  #   restart: always
-  #   ports:
-  #     - 4001:4001
+  soketio:
+    image: soketio
+    build: 
+      context: ./soketio
+      dockerfile: Dockerfile
+      target: production
+    restart: always
+    ports:
+      - 4001:4001
   
-  # upload:
-  #   image: upload
-  #   build: 
-  #     dockerfile: ./upload/Dockerfile
-  #     target: production
-  #   restart: always
-  #   ports:
-  #     - 4002:4002
+  upload:
+    image: upload
+    build: 
+      context: ./upload
+      dockerfile: Dockerfile
+      target: base
+    restart: always
+    ports:
+      - 4002:4002
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
   
-  # proxy:
-  #   image: proxy
-  #   build: 
-  #     context: ./proxy
-  #     dockerfile: Dockerfile
-  #     target: base
-  #   restart: always
-  #   ports:
-  #     - 80:80
-  #   depends_on:
-  #     - api-re
+  proxy:
+    image: proxy
+    build: 
+      context: ./proxy
+      dockerfile: Dockerfile
+      target: base
+    restart: always
+    ports:
+      - 5000:5000
+    environment:
+      POSTGRES_USER: tes
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: development_db
+      POSTGRES_HOST: db
+    depends_on:
+      - api
+      - upload
+
 volumes:
   pgdata:
     external: true
