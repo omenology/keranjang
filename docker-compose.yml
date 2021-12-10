@@ -9,6 +9,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - closed
 
   mongo-express:
     image: mongo-express
@@ -18,6 +20,9 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: password
+    networks:
+      - closed
+      - outside
 
   db:
     image: postgres
@@ -32,6 +37,8 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - closed
 
 
   adminer:
@@ -39,6 +46,9 @@ services:
     restart: always
     ports:
       - 8080:8080
+    networks:
+      - closed
+      - outside
       
   api:
     image: api
@@ -56,6 +66,8 @@ services:
       POSTGRES_HOST: db
     depends_on:
       - db
+    networks:
+      - closed
 
   soketio:
     image: soketio
@@ -66,6 +78,8 @@ services:
     restart: always
     ports:
       - 4001:4001
+    networks:
+      - closed
   
   upload:
     image: upload
@@ -79,6 +93,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - closed
   
   proxy:
     image: proxy
@@ -94,14 +110,29 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: development_db
       POSTGRES_HOST: db
+      API_URL: http://api:4000
+      API_UPLOAD_URL: http://upload:4002
     depends_on:
       - api
       - upload
+    networks:
+      - closed
+      - outside
 
 volumes:
   pgdata:
     external: true
-    name: pgdata  
+    name: pgdata   
+
+networks:
+  outside:
+    name: outside
+    driver: bridge
+  closed:
+    internal: true
+    name: closed
+    driver: bridge
+
       
 
   
