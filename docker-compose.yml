@@ -40,7 +40,6 @@ services:
     networks:
       - closed
 
-
   adminer:
     image: adminer
     restart: always

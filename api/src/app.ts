@@ -2,11 +2,9 @@
 import express, { Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
-import swaggerUI from "swagger-ui-express";
 
 import routes from "./routes";
 import { syncModels, cronTask, morganMiddleware } from "./helpers/utils";
-const docs = require("./helpers/docs-openapi.json");
 
 // checkout, histori, filter get
 // corn job
@@ -33,10 +31,6 @@ app.use(morganMiddleware);
 
 // routes enrty
 app.use("/", routes);
-
-// route documentation
-app.use("/documentation", swaggerUI.serve);
-app.get("/documentation", swaggerUI.setup(docs));
 
 // route not found
 app.use("*", (req, res) => {

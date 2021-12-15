@@ -1,0 +1,482 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Sed vel mollis lectus, quis rutrum augue. Etiam mattis volutpat hendrerit. Suspendisse nulla ex, tincidunt ac metus sed, tempor ultrices dolor. Integer eget egestas diam, blandit finibus nisl. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse potenti. Maecenas sit amet turpis iaculis, fringilla quam vitae, mattis erat. Nam ut ullamcorper ligula. Nulla auctor semper dignissim. Pellentesque nec eros hendrerit dolor scelerisque porttitor non sed sapien. Nullam aliquam bibendum quam vel vulputate. Nunc non mi risus.",
+    "version": "1.0.0",
+    "title": "API Documentation",
+    "contact": { "email": "ikballukmanulhakim5@gmail.com" }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/",
+      "description": "Local Server"
+    }
+  ],
+  "tags": [
+    { "name": "auth", "description": "mengenai login, register, dan lupa password" },
+    { "name": "user", "description": "Operations about user" },
+    { "name": "barang", "description": "Hal hal mengenai CRUD barang" },
+    { "name": "keranjang", "description": "Hal hal mengenai CRUD keranjang" },
+    { "name": "checkout", "description": "Hal hal mengenai riwayat ransaksi" }
+  ],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Login",
+        "description": "Login untuk mengakses API",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "user1"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "required": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsMkBtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjIiLCJ1c2VySWQiOiJlYzE0YjExZS05MTU1LTQ0NDEtYjlhNy0zNjFmYTRiZTJmNWQiLCJpYXQiOjE2Mzg1MTk4NTYsImV4cCI6MTYzODU0ODY1Nn0.F1HiKhvweR8QK2npzbqi-KipV_Rx_ibcnhnTfYmGTsw"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error authorized failed",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "password required"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "register user",
+        "description": "membuat user baru",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "required": true
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "required": true
+                  }
+                },
+                "example": {
+                  "username": "user1",
+                  "email": "email1@mail.com",
+                  "password": "password1"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "ybbhg65ad657sa",
+                  "username": "user1",
+                  "email": "email1@mail.com",
+                  "password": "password1",
+                  "createdAt": "date format",
+                  "updatedAt": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error authorized failed",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "password required"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "error internal server",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "something went wrong"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/forget": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "forget password",
+        "description": "lupa password dikirim email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "required": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user": {
+      "get": {
+        "tags": ["user"],
+        "summary": "get users",
+        "description": "ambil banyak data user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "info": {
+                      "type": "object",
+                      "properties": {
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "offset": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "info": {
+                    "limit": 10,
+                    "offset": 0,
+                    "total": 2
+                  },
+                  "data": [
+                    {
+                      "id": "4abdfdf0-43d7-47d4-bdc5-981ddbbe0ace",
+                      "username": "user1",
+                      "email": "email1@mail.com",
+                      "password": "password1",
+                      "active": true,
+                      "createdAt": "2021-12-09T12:27:38.766Z",
+                      "updatedAt": "2021-12-09T12:27:38.766Z",
+                      "deletedAt": null
+                    },
+                    {
+                      "id": "ec14b11e-9155-4441-b9a7-361fa4be2f5d",
+                      "username": "user2",
+                      "email": "email2@mail.com",
+                      "password": "password2",
+                      "active": true,
+                      "createdAt": "2021-12-09T12:27:38.766Z",
+                      "updatedAt": "2021-12-09T12:27:38.766Z",
+                      "deletedAt": null
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["user"],
+        "summary": "add user",
+        "description": "membuat user baru",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "required": true
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "required": true
+                  }
+                },
+                "example": {
+                  "username": "user1",
+                  "email": "email1@mail.com",
+                  "password": "password1"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": "2de5fdcc-8105-49c1-ad48-4beafa3a5c5e",
+                    "active": false,
+                    "username": "user4",
+                    "email": "email4@mail.com",
+                    "password": "password4",
+                    "updatedAt": "2021-12-14T10:33:48.558Z",
+                    "createdAt": "2021-12-14T10:33:48.558Z",
+                    "deletedAt": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{id}": {
+      "delete": {
+        "tags": ["user"],
+        "summary": "delete user",
+        "description": "menghapus (paranoid) data user berdasrkan id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "format id uuidv4"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": "2de5fdcc-8105-49c1-ad48-4beafa3a5c5e",
+                    "active": false,
+                    "username": "user4",
+                    "email": "email4@mail.com",
+                    "password": "password4",
+                    "updatedAt": "2021-12-14T10:33:48.558Z",
+                    "createdAt": "2021-12-14T10:33:48.558Z",
+                    "deletedAt": null
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "id fortmat is not valid"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ffec0b55-e780-4256-bad4-16fd013e6bac"
+          },
+          "username": {
+            "type": "string",
+            "example": "john"
+          },
+          "email": {
+            "type": "string",
+            "example": "email@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "test"
+          },
+          "active": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "barang": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ffec0b55-e780-4256-bad4-16fd013e6bac"
+          },
+          "name": {
+            "type": "string",
+            "example": "nama barang"
+          },
+          "price": {
+            "type": "integer",
+            "example": 100
+          },
+          "description": {
+            "type": "string",
+            "example": "description barang "
+          },
+          "image": {
+            "type": "string",
+            "format": "url",
+            "example": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png"
+          }
+        }
+      },
+      "keranjang": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ffec0b55-e780-4256-bad4-16fd013e6bac"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "barang": {
+            "$ref": "#/components/schemas/barang"
+          }
+        }
+      },
+      "checkout": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ffec0b55-e780-4256-bad4-16fd013e6bac"
+          },
+          "orderId": {
+            "type": "string",
+            "example": "oreder-12121"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/barang"
+            }
+          },
+          "totalPayment": {
+            "type": "integer",
+            "example": 100
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "shippingAddress": {
+            "type": "string",
+            "example": "address"
+          },
+          "reciver": {
+            "type": "string",
+            "example": "nama"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "pendding"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+      }
+    }
+  }
+}

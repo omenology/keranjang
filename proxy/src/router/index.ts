@@ -1,13 +1,16 @@
 import { Request, Response, Router } from "express";
-//import expressProxy from "express-http-proxy";
-import { createProxyMiddleware } from "http-proxy-middleware";
+import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
+import swaggerUI from "swagger-ui-express";
 
 import { verifyToken, generateToken } from "../utils/jwt";
 import connection from "../utils/connection";
 import { API_URL, API_UPLOAD_URL } from "../utils/constants";
 
+const docs = require("../docs-openapi.json");
+
 const route = Router({ mergeParams: true });
 
+route.use("/api/documentation", swaggerUI.serve, swaggerUI.setup(docs));
 route.post("/api/auth/login", async (req: Request, res: Response) => {
   try {
     const { email, username, password } = req.body;
@@ -31,12 +34,12 @@ route.get("/api/auth/refreshtoken", verifyToken, async (req: Request, res: Respo
     return res.status(500).json({ message: "something went wrong" });
   }
 });
-route.use("/api", verifyToken, createProxyMiddleware({ target: API_URL, changeOrigin: true }));
-route.get("/api-upload", createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true }));
-route.use("/api-upload", verifyToken, createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true }));
+route.use("/api", verifyToken, createProxyMiddleware({ target: API_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api": "" } }));
+route.get("/api-upload", createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, pathRewrite: { "/api-upload": "" } }));
+route.use("/api-upload", verifyToken, createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
 route.use(
   "/api-socket",
-  // verifyToken,
+  verifyToken,
   createProxyMiddleware({
     target: "http://localhost:4001",
     ws: true,
