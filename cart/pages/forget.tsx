@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import axios from "axios";
 
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { FloatingLabel, Button, Form, Alert, Spinner } from "react-bootstrap";
 
+import { axiosInstance as axios } from "../utils";
 import LoginWraper from "../components/loginWraper";
 import css from "../styles/login.module.css";
 
@@ -23,7 +23,7 @@ const Forget = (props) => {
     console.log(data);
     try {
       setLoading(true);
-      await axios.post("http://localhost:4000/user/forget", data);
+      await axios.post("/api/auth/forget", data);
       setLoading(false);
       setAlert({ type: "success", message: "Check your email" });
     } catch (error) {

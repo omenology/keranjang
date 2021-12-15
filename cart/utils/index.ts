@@ -11,6 +11,8 @@ export { useCheckout } from "./useCheckout";
 export { withSession } from "./session";
 export { fetcher } from "./fetcher";
 
+export { API_BASE_URL, SECRET_COOKIE_PASSWORD } from "./constant";
+
 export type { infoType, dataCheckoutType, GetServerSidePropsContextWithSession, RequestWithSession, NextApiResponse, payloadLogin, payloadRegister };
 export type { dataBarangType } from "./useBarang";
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import useSWR, { SWRResponse } from "swr";
-import { fetcher, infoType, dataBarangType } from ".";
+import { fetcher, infoType, dataBarangType, API_BASE_URL } from ".";
 
 type dataKeranjangType = {
   id: string;
@@ -34,7 +34,7 @@ type bodyTransaction = {
 
 export const useKeranjang = (token: string) => {
   const [query, setQuery] = useState<queryType>({ limit: 10, offset: 0 });
-  const { data, error, mutate } = useSWR(`http://localhost:4000/keranjang?${new URLSearchParams(query as any).toString()}`, (url) =>
+  const { data, error, mutate } = useSWR(`${API_BASE_URL}/api/keranjang?${new URLSearchParams(query as any).toString()}`, (url) =>
     fetcher(url, {
       headers: {
         Authorization: "Bearer " + token,
@@ -43,7 +43,7 @@ export const useKeranjang = (token: string) => {
   ) as SWRResponse<responseKeranjangType, Error>;
 
   const axiosInstance = axios.create({
-    baseURL: "http://localhost:4000/",
+    baseURL: API_BASE_URL,
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -51,7 +51,7 @@ export const useKeranjang = (token: string) => {
 
   const removeFromKeranjang = async (id: string) => {
     try {
-      const response = await axiosInstance.delete(`/keranjang/${id}`);
+      const response = await axiosInstance.delete(`/api/keranjang/${id}`);
       return response.data;
     } catch (error) {
       throw error;
@@ -60,7 +60,7 @@ export const useKeranjang = (token: string) => {
 
   const createTransaction = async (payload: bodyTransaction): Promise<{ token: string; redirect_url: string }> => {
     try {
-      const response = await axiosInstance.post(`/keranjang/transaction`, payload);
+      const response = await axiosInstance.post(`/api/keranjang/transaction`, payload);
       return response.data.data;
     } catch (error) {
       throw error;
@@ -69,7 +69,7 @@ export const useKeranjang = (token: string) => {
 
   const transactionSuccess = async (payload: object) => {
     try {
-      const response = await axiosInstance.post(`/checkout`, payload);
+      const response = await axiosInstance.post(`/api/checkout`, payload);
       return response.data.data;
     } catch (error) {
       throw error;

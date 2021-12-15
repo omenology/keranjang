@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Session, withIronSession } from "next-iron-session";
+import { SECRET_COOKIE_PASSWORD } from ".";
 
 // optionally add stronger typing for next-specific implementation
 export type NextIronRequest = NextApiRequest & { session: Session };
@@ -7,7 +8,7 @@ export type NextIronHandler = (req: NextIronRequest, res: NextApiResponse) => vo
 
 export const withSession = (handler: Function) =>
   withIronSession(handler, {
-    password: process.env.SECRET_COOKIE_PASSWORD || "asdjaskldjlkasjdlkasjdlasjdasdasdasdasdasdasdasdasdasdad",
+    password: SECRET_COOKIE_PASSWORD,
     cookieName: "iron-session",
     cookieOptions: {
       secure: process.env.NODE_ENV === "production",

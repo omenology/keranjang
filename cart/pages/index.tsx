@@ -3,9 +3,8 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import jwtDecode from "jwt-decode";
 
-import { GetServerSidePropsContextWithSession, useBarang, withSession } from "../utils";
+import { GetServerSidePropsContextWithSession, useBarang, withSession, API_BASE_URL } from "../utils";
 
 import { Button, OverlayTrigger, Tooltip, Modal, Form, Spinner, ProgressBar, Card, Pagination } from "react-bootstrap";
 import Navigation from "../components/navigation";
@@ -41,7 +40,8 @@ const Index = ({ token }) => {
       formData.append("img", e.target.files[0]);
       const response = await axios({
         method: "POST",
-        url: "http://localhost:4002/image",
+        baseURL: API_BASE_URL,
+        url: "/api-upload/image",
         headers: {
           "content-type": "multipart/form-data",
           Authorization: "Bearer " + token,
@@ -132,7 +132,7 @@ const Index = ({ token }) => {
           <Spinner animation="border" style={{ position: "absolute", top: "50%", left: "50%" }} />
         ) : (
           <div className="row">
-            {data.data.map((val, index) => {
+            {data?.data.map((val, index) => {
               return <Item key={index} data={val} addToKeranjang={addToKeranjang} />;
             })}
           </div>

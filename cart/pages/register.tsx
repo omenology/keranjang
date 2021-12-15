@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -8,7 +7,7 @@ import { FloatingLabel, Button, Form, Spinner, Alert } from "react-bootstrap";
 import LoginWraper from "../components/loginWraper";
 
 import css from "../styles/login.module.css";
-import { payloadRegister } from "../utils";
+import { payloadRegister, axiosInstance as axios } from "../utils";
 
 const Register = (props) => {
   const {
@@ -25,7 +24,7 @@ const Register = (props) => {
     console.log(data);
     try {
       setLoading(true);
-      await axios.post("http://localhost:4000/user/", data);
+      await axios.post("http://localhost:5000/api/auth/register", data);
       setLoading(false);
       setAlert({ type: "success", message: "Register success chek activation email" });
     } catch (error) {

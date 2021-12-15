@@ -1,8 +1,8 @@
 import useSWR from "swr";
-import { fetcher } from ".";
+import { fetcher, API_BASE_URL } from ".";
 
 export const useCheckout = (token) => {
-  const { data, error, mutate } = useSWR("http://localhost:4000/checkout", (url) =>
+  const { data, error, mutate } = useSWR(`${API_BASE_URL}/api/checkout`, (url) =>
     fetcher(url, {
       headers: {
         Authorization: "Bearer " + token,

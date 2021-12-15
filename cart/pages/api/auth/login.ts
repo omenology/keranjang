@@ -1,10 +1,13 @@
 import axios from "axios";
-import { withSession, RequestWithSession, NextApiResponse } from "../../../utils";
+import { withSession, RequestWithSession, NextApiResponse, API_BASE_URL } from "../../../utils";
 
 export default withSession(async (req: RequestWithSession, res: NextApiResponse) => {
   try {
-    const resLogin = await axios.post("http://localhost:5000/api/auth/login", {
-      ...req.body.payload,
+    const resLogin = await axios({
+      baseURL: API_BASE_URL,
+      url: "/api/auth/login",
+      method: "post",
+      data: req.body.payload,
     });
     req.session.set("token", resLogin.data.data.token);
     console.log("====");

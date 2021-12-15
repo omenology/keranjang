@@ -3,6 +3,7 @@ import jwtDecode from "jwt-decode";
 import { io, Socket } from "socket.io-client";
 import localforage from "localforage";
 
+import { API_BASE_URL } from "../utils";
 import { Card, Button, Form } from "react-bootstrap";
 import css from "../styles/chat.module.css";
 
@@ -24,7 +25,7 @@ const Chat = ({ token }) => {
   };
 
   if (!socketio) {
-    socketio = io("http://localhost:4001/", {
+    socketio = io(`${API_BASE_URL}/api-socket`, {
       auth: {
         token: token,
       },

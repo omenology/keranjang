@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import useSWR, { SWRResponse } from "swr";
-import { fetcher, infoType } from ".";
+import { fetcher, infoType, API_BASE_URL } from ".";
 
 export type dataBarangType = {
   id: string;
@@ -34,7 +34,7 @@ export const useBarang = (token: string) => {
   const [query, setQuery] = useState<queryType>({ limit: 9, offset: 0 });
   const cleanQuery = { ...query, ...query?.order };
   delete cleanQuery.order;
-  const { data, error, mutate } = useSWR(`http://localhost:4000/barang?${new URLSearchParams(cleanQuery as any).toString()}`, (url) =>
+  const { data, error, mutate } = useSWR(`${API_BASE_URL}/api/barang?${new URLSearchParams(cleanQuery as any).toString()}`, (url) =>
     fetcher(url, {
       headers: {
         Authorization: "Bearer " + token,
@@ -43,7 +43,7 @@ export const useBarang = (token: string) => {
   ) as SWRResponse<responseBarangType, Error>;
 
   const axiosInstance = axios.create({
-    baseURL: "http://localhost:4000/",
+    baseURL: API_BASE_URL,
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -53,7 +53,7 @@ export const useBarang = (token: string) => {
     payload.price = parseInt(payload.price);
     if (payload.image == "") delete payload.image;
     try {
-      const respones = await axiosInstance.post("http://localhost:4000/barang/", payload);
+      const respones = await axiosInstance.post("/api/barang/", payload);
       mutate({ ...data, data: data.data.concat(respones.data.data) }, false);
       return respones.data;
     } catch (error) {
@@ -63,7 +63,7 @@ export const useBarang = (token: string) => {
 
   const addToKeranjang = async (id: string) => {
     try {
-      const response = await axiosInstance.post(`/keranjang/${id}`);
+      const response = await axiosInstance.post(`/api/keranjang/${id}`);
       return response.data;
     } catch (error) {
       throw error;

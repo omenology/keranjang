@@ -1,9 +1,12 @@
 import axios from "axios";
-import { withSession, RequestWithSession, NextApiResponse } from "../../../utils";
+import { withSession, RequestWithSession, NextApiResponse, API_BASE_URL } from "../../../utils";
 
 export default withSession(async (req: RequestWithSession, res: NextApiResponse) => {
   try {
-    const response = await axios.get("http://localhost:4000/refreshtoken", {
+    const response = await axios({
+      baseURL: API_BASE_URL,
+      url: "/api/auth/refreshtoken",
+      method: "get",
       headers: {
         Authorization: req.session.get("token"),
       },

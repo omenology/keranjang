@@ -34,9 +34,6 @@ route.get("/api/auth/refreshtoken", verifyToken, async (req: Request, res: Respo
     return res.status(500).json({ message: "something went wrong" });
   }
 });
-route.use("/api", verifyToken, createProxyMiddleware({ target: API_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api": "" } }));
-route.get("/api-upload", createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, pathRewrite: { "/api-upload": "" } }));
-route.use("/api-upload", verifyToken, createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
 route.use(
   "/api-socket",
   verifyToken,
@@ -46,5 +43,8 @@ route.use(
     changeOrigin: true,
   })
 );
+route.get("/api-upload", createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, pathRewrite: { "/api-upload": "" } }));
+route.use("/api-upload", verifyToken, createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
+route.use("/api", verifyToken, createProxyMiddleware({ target: API_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api": "" } }));
 
 export default route;
