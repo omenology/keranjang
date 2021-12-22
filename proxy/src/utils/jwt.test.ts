@@ -42,6 +42,7 @@ describe("tes middlware verivyToken dan function generate token", () => {
     expect(nextFunction).toBeCalledTimes(0);
     expect(mockResponse.status).toBeCalledWith(401);
     expect(verivyToken).toBeCalledTimes(1);
+    
     // const decode = await verifyToken(token);
     // expect(decode.error).toBe(undefined);
     // expect(decode.data).toEqual({ ...payload, iat: expect.any(Number), exp: expect.any(Number) });
