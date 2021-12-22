@@ -41,6 +41,6 @@ app.use("*", (req, res) => {
 cronTask.start();
 
 // sync models with db
-// syncModels();
+syncModels();
 
 export default app;

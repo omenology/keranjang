@@ -25,10 +25,10 @@ declare global {
 
 // sync db with model
 export const syncModels = async () => {
-  await user.sync({ force: true });
-  await barang.sync({ force: true });
-  await keranjang.sync({ force: true });
-  await checkout.sync({ force: true });
+  await user.sync();
+  await barang.sync();
+  await keranjang.sync();
+  await checkout.sync();
 };
 
 export const cronTask = cron.schedule("* * 1 * * *", () => {

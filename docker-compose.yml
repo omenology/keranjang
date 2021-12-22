@@ -39,6 +39,7 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - closed
+      - outside
 
   adminer:
     image: adminer
@@ -67,6 +68,7 @@ services:
       - db
     networks:
       - closed
+      - outside
 
   soketio:
     image: soketio
@@ -120,13 +122,12 @@ services:
 
 volumes:
   pgdata:
-    external: true
     name: pgdata   
 
 networks:
   outside:
     name: outside
-    driver: bridge
+    driver: bridge 
   closed:
     internal: true
     name: closed
