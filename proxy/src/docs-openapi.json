@@ -357,6 +357,277 @@
           }
         }
       }
+    },
+    "/api/barang/":{
+      "get": {
+        "tags": ["barang"],
+        "summary": "get barang",
+        "description": "ambil banyak data barang",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "info": {
+                      "type": "object",
+                      "properties": {
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "offset": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "info": {
+                    "limit": 10,
+                    "offset": 0,
+                    "total": 2
+                  },
+                  "data": [
+                    {
+                      "id": "bdc66f3d-d79e-45db-8434-c7712ef3c498",
+                      "name": "barang 1",
+                      "price": 0,
+                      "description": "",
+                      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/ac/20070325222640%21No_image_available.svg/120px-No_image_available.svg.png",
+                      "createdAt": "2021-12-22T07:42:44.313Z",
+                      "updatedAt": "2021-12-22T07:42:44.313Z"
+                    },
+                    {
+                      "id": "3e2989c9-0318-47aa-af13-3dc9a8f361e3",
+                      "name": "barang 2",
+                      "price": 100,
+                      "description": "desc barang 2",
+                      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/ac/20070325222640%21No_image_available.svg/120px-No_image_available.svg.png",
+                      "createdAt": "2021-12-22T07:43:41.177Z",
+                      "updatedAt": "2021-12-22T07:43:41.177Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["barang"],
+        "summary": "add barang",
+        "description": "membuat barang baru",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "price": {
+                    "type": "integer"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "barang 2",
+                  "price": 200,
+                  "description": "desc barang 2",
+                  "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/ac/20070325222640%21No_image_available.svg/120px-No_image_available.svg.png"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": "3e2989c9-0318-47aa-af13-3dc9a8f361e3",
+                    "name": "barang 2",
+                    "price": 100,
+                    "description": "desc barang 2",
+                    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/ac/20070325222640%21No_image_available.svg/120px-No_image_available.svg.png",
+                    "updatedAt": "2021-12-22T07:43:41.177Z",
+                    "createdAt": "2021-12-22T07:43:41.177Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error bad request",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "name required"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/barang/{id}":{
+      "put": {
+        "tags": ["barang"],
+        "summary": "edit barang",
+        "description": "merubah data barang",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "format id uuidv4"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "integer"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "barang 2 edite",
+                  "price": 200,
+                  "description": "desc barang 2",
+                  "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/ac/20070325222640%21No_image_available.svg/120px-No_image_available.svg.png"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": "3e2989c9-0318-47aa-af13-3dc9a8f361e3",
+                    "name": "barang 2",
+                    "price": 100,
+                    "description": "desc barang 2",
+                    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/ac/20070325222640%21No_image_available.svg/120px-No_image_available.svg.png",
+                    "updatedAt": "2021-12-22T07:43:41.177Z",
+                    "createdAt": "2021-12-22T07:43:41.177Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["barang"],
+        "summary": "delete barang",
+        "description": "delete data barang",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "format id uuidv4"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": "3e2989c9-0318-47aa-af13-3dc9a8f361e3",
+                    "name": "barang 2",
+                    "price": 100,
+                    "description": "desc barang 2",
+                    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/ac/20070325222640%21No_image_available.svg/120px-No_image_available.svg.png",
+                    "updatedAt": "2021-12-22T07:43:41.177Z",
+                    "createdAt": "2021-12-22T07:43:41.177Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
