@@ -25,11 +25,13 @@ const Chat = ({ token }) => {
   };
 
   if (!socketio) {
-    socketio = io(`${API_BASE_URL}/api-socket`, {
-      auth: {
-        token: token,
-      },
+    socketio = io(`${API_BASE_URL}`, {
+      path: "/api-socket",
+      extraHeaders:{
+        Authorization: `Bearer ${token}`,
+      }
     });
+    console.log(socketio,"=======")
   }
 
   const [onlineUser, setOnlineUser] = useState<string[]>([]);

@@ -35,7 +35,7 @@ app.use((err: MulterError, req: Request, res: Response, next: NextFunction) => {
 
 connection
   .then(() => {
-    app.listen(4002, "localhost");
+    app.listen(4002);
     console.log("app listening on localhost:4002");
   })
   .catch((err) => {

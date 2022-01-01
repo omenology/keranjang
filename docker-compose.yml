@@ -11,6 +11,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     networks:
       - closed
+      - outside
 
   mongo-express:
     image: mongo-express
@@ -81,6 +82,7 @@ services:
       - 4001:4001
     networks:
       - closed
+      - outside 
   
   upload:
     image: upload
@@ -91,11 +93,17 @@ services:
     restart: always
     ports:
       - 4002:4002
+    volumes:
+      - ./upload/src/storage:/usr/app/src/storage
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
+      HOST_DB: mongo
     networks:
       - closed
+      - outside
+    depends_on:
+      - mongo
   
   proxy:
     image: proxy
@@ -113,6 +121,7 @@ services:
       POSTGRES_HOST: db
       API_URL: http://api:4000
       API_UPLOAD_URL: http://upload:4002
+      API_SOCKET_IO_URL: http://soketio:4001
     depends_on:
       - api
       - upload

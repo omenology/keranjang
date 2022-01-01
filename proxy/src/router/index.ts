@@ -4,7 +4,7 @@ import swaggerUI from "swagger-ui-express";
 
 import { verifyToken, generateToken } from "../utils/jwt";
 import connection from "../utils/connection";
-import { API_URL, API_UPLOAD_URL } from "../utils/constants";
+import { API_URL, API_UPLOAD_URL, API_SOCKET_IO_URL } from "../utils/constants";
 
 const docs = require("../docs-openapi.json");
 
@@ -38,13 +38,13 @@ route.use(
   "/api-socket",
   verifyToken,
   createProxyMiddleware({
-    target: "http://localhost:4001",
+    target: API_SOCKET_IO_URL,
     ws: true,
     changeOrigin: true,
   })
 );
-route.get("/api-upload", createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, pathRewrite: { "/api-upload": "" } }));
-route.use("/api-upload", verifyToken, createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
+route.get("/api-upload", createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
+route.use("/api-upload", verifyToken, createProxyMiddleware("/api-upload",{ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
 route.use("/api", verifyToken, createProxyMiddleware({ target: API_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api": "" } }));
 
 export default route;
