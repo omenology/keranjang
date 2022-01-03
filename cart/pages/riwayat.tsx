@@ -1,7 +1,8 @@
 import React from "react";
 import { GetServerSideProps } from "next";
+import { withIronSessionSsr } from "iron-session/next";
 
-import { GetServerSidePropsContextWithSession, useCheckout, withSession } from "../utils";
+import {  useCheckout, cookieOptions } from "../utils";
 
 import Head from "next/head";
 import { Card, Spinner, Image } from "react-bootstrap";
@@ -63,12 +64,12 @@ const Riwayat = ({ token }) => {
 };
 Riwayat.navigation = Navigation;
 
-export const getServerSideProps: GetServerSideProps = withSession(async (context: GetServerSidePropsContextWithSession) => {
+export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async (context) => {
   return {
     props: {
-      token: context.req.session.get("token") || null,
+      token: context.req.session.token || null,
     },
   };
-});
+},cookieOptions);
 
 export default Riwayat;

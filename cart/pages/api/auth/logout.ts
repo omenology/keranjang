@@ -1,6 +1,7 @@
-import { withSession, RequestWithSession, NextApiResponse } from "../../../utils";
+import { withIronSessionApiRoute } from "iron-session/next";
+import { cookieOptions } from "../../../utils";
 
-export default withSession(async (req: RequestWithSession, res: NextApiResponse) => {
+export default withIronSessionApiRoute(async (req, res) => {
   req.session.destroy();
   res.status(200).send({ message: "logout successful" });
-});
+}, cookieOptions);

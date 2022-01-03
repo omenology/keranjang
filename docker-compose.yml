@@ -82,7 +82,7 @@ services:
       - 4001:4001
     networks:
       - closed
-      - outside 
+      - outside
   
   upload:
     image: upload
@@ -127,6 +127,21 @@ services:
       - upload
     networks:
       - closed
+      - outside
+  webapp:
+    image: webapp
+    build: 
+      context: ./cart
+      dockerfile: Dockerfile
+      target: base
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      API_BASE_URL: http://proxy:5000
+    depends_on:
+      - proxy
+    networks:
       - outside
 
 volumes:

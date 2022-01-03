@@ -19,9 +19,9 @@ export const generateToken = (payload: payload): string => {
 };
 
 export const verifyToken = async(req: Request, res: Response, next: NextFunction) => {
+
   try {
-    console.log(req.url, req.method);
-    if (/\/(auth)(\/\w+)?/gi.test(req.url)) return next();
+    if (/\/(auth)\b(?!\/refreshtoken\b)(\/\w+)?/gi.test(req.url)) return next();
     
     const authorization = req.headers.authorization || req.header("Authorization");
     if (!authorization) throw httpError(401);
@@ -32,6 +32,7 @@ export const verifyToken = async(req: Request, res: Response, next: NextFunction
   
     const decoded = jwt.verify(token, TOKEN_SECREAT);
     req.decoded = decoded as payload;
+   
     return next();
   } catch (err: any) {
     const error: HttpError = err;

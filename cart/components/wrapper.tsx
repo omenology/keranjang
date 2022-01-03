@@ -3,7 +3,7 @@ import React from "react";
 
 const Wrapper = ({ children, token }) => {
   React.useEffect(() => {
-    if (token) axios.get("/api/auth/refresh");
+    if (token) axios.get("/api/auth/refresh")
   }, []);
 
   return children;

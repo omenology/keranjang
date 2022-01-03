@@ -62,14 +62,14 @@ export const checkAndUpdate = async (req: Request, res: Response) => {
       offset,
     });
     const recentStatus = rows.map(async (val) => {
-      if (val.getDataValue("paymentStatus") === "pendding") {
+      
+      if (val.getDataValue("paymentStatus") === "pending") {
         const response = await axios.get(`https://api.sandbox.midtrans.com/v2/${val.getDataValue("orderId")}/status`, {
           auth: {
             username: MIDTRANS_SERVER_KEY,
             password: "",
           },
         });
-
         if (response.data.status_code == "200") {
           val.set("paymentStatus", "success");
           val.save();

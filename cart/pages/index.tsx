@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { withIronSessionSsr } from "iron-session/next";
 
-import { GetServerSidePropsContextWithSession, useBarang, withSession, API_BASE_URL } from "../utils";
+import { cookieOptions, useBarang, API_BASE_URL } from "../utils";
 
 import { Button, OverlayTrigger, Tooltip, Modal, Form, Spinner, ProgressBar, Card, Pagination } from "react-bootstrap";
 import Navigation from "../components/navigation";
@@ -12,9 +13,9 @@ import Item from "../components/item";
 import Container from "../components/container";
 import css from "../styles/main.module.css";
 
-const Index = ({ token }) => {
+const Index = ({ token,tes }) => {
   const { register, handleSubmit } = useForm();
-  const { data, loading, addBarang, query, setQuery, addToKeranjang } = useBarang(token);
+  const { data, loading, addBarang, removeBarang, query, setQuery, addToKeranjang } = useBarang(token);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [loadingUpload, setLoading] = useState<boolean>(false);
   const [imgUrl, setImgUrl] = useState<string>("");
@@ -133,7 +134,7 @@ const Index = ({ token }) => {
         ) : (
           <div className="row">
             {data?.data.map((val, index) => {
-              return <Item key={index} data={val} addToKeranjang={addToKeranjang} />;
+              return <Item key={index} data={val} addToKeranjang={addToKeranjang} removeBarang={removeBarang} />;
             })}
           </div>
         )}
@@ -182,12 +183,13 @@ const Index = ({ token }) => {
 
 Index.navigation = Navigation;
 
-export const getServerSideProps: GetServerSideProps = withSession(async (context: GetServerSidePropsContextWithSession) => {
+export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async (context) => {
   return {
     props: {
-      token: context.req.session.get("token") || null,
+      token: context.req.session.token || null
     },
   };
-});
+
+},cookieOptions);
 
 export default Index;

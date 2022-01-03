@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 import { FloatingLabel, Button, Form, Spinner, Alert } from "react-bootstrap";
 
 import LoginWraper from "../components/loginWraper";
 
 import css from "../styles/login.module.css";
-import { payloadRegister, axiosInstance as axios } from "../utils";
+import { payloadRegister } from "../utils";
 
 const Register = (props) => {
   const {

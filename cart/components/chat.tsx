@@ -31,7 +31,6 @@ const Chat = ({ token }) => {
         Authorization: `Bearer ${token}`,
       }
     });
-    console.log(socketio,"=======")
   }
 
   const [onlineUser, setOnlineUser] = useState<string[]>([]);

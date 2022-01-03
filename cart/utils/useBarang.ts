@@ -61,6 +61,15 @@ export const useBarang = (token: string) => {
     }
   };
 
+  const removeBarang =async (barangId:string) => {
+    try {
+      await axiosInstance.delete(`/api/barang/${barangId}`);
+      mutate()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const addToKeranjang = async (id: string) => {
     try {
       const response = await axiosInstance.post(`/api/keranjang/${id}`);
@@ -70,5 +79,5 @@ export const useBarang = (token: string) => {
     }
   };
 
-  return { data, loading: !error && !data, error, mutate, query, setQuery, addBarang, addToKeranjang };
+  return { data, loading: !error && !data, error, mutate, query, setQuery, addBarang, removeBarang, addToKeranjang };
 };

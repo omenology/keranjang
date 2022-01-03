@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useForm } from "react-hook-form";
+import { withIronSessionSsr } from "iron-session/next";
 
-import { GetServerSidePropsContextWithSession, useKeranjang, withSession } from "../utils";
+import { cookieOptions, useKeranjang } from "../utils";
 
 import Head from "next/head";
 import Script from "next/script";
@@ -13,6 +14,7 @@ import Container from "../components/container";
 import css from "../styles/keranjang.module.css";
 
 const Keranjang = ({ token }) => {
+  
   const refTotal = useRef([]);
   const refQuantity = useRef([]);
   const refCheck = useRef([]);
@@ -23,7 +25,7 @@ const Keranjang = ({ token }) => {
   const [snapReload, setSnapReload] = useState(false);
   const [dataCheckout, setDataCheckout] = useState({});
   const { data, loading, error, removeFromKeranjang, createTransaction, transactionSuccess } = useKeranjang(token);
-
+  
   const {
     register,
     handleSubmit,
@@ -77,10 +79,15 @@ const Keranjang = ({ token }) => {
         });
       }
     });
-    const transaction = await createTransaction(bodyTransaction);
-
-    setDataCheckout(bodyTransaction);
-    setSnapToken(transaction.token || null);
+    try {
+      
+      const transaction = await createTransaction(bodyTransaction);
+  
+      setDataCheckout(bodyTransaction);
+      setSnapToken(transaction.token || null);
+    } catch (error) {
+      console.log("create transaction error", error)
+    }
   };
 
   useEffect(() => {
@@ -133,7 +140,7 @@ const Keranjang = ({ token }) => {
             {loading ? (
               <Spinner animation="border" style={{ position: "absolute", top: "50%", left: "50%" }} />
             ) : (
-              data.data.map(({ id, barang }, index) => {
+              data?.data.map(({ id, barang }, index) => {
                 return (
                   <tr key={index}>
                     <td>
@@ -142,7 +149,7 @@ const Keranjang = ({ token }) => {
                     <td>
                       <div className="row">
                         <div className="col-4">
-                          <img src={barang.image} className="img-fluid rounded-start" alt={barang.name} />
+                          <img src={barang.image.replace("http://localhost:4002","http://localhost:5000/api-upload")} className="img-fluid rounded-start" alt={barang.name} />
                         </div>
                         <div className="col-8">
                           <div className="card-body">
@@ -232,12 +239,12 @@ const Keranjang = ({ token }) => {
 
 Keranjang.navigation = Navigation;
 
-export const getServerSideProps: GetServerSideProps = withSession(async (context: GetServerSidePropsContextWithSession) => {
+export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async (context) => {
   return {
     props: {
-      token: context.req.session.get("token") || null,
+      token: context.req.session.token || null,
     },
   };
-});
+},cookieOptions);
 
 export default Keranjang;

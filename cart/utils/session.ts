@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Session, withIronSession } from "next-iron-session";
+// import { Session, withIronSession } from "next-iron-session";
 import { SECRET_COOKIE_PASSWORD } from ".";
+
 
 // optionally add stronger typing for next-specific implementation
 export type NextIronRequest = NextApiRequest & { session: Session };

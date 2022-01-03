@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
 import swaggerUI from "swagger-ui-express";
 
@@ -26,7 +26,7 @@ route.post("/api/auth/login", async (req: Request, res: Response) => {
     return res.status(500).json({ message: "something went wrong" });
   }
 });
-route.get("/api/auth/refreshtoken", verifyToken, async (req: Request, res: Response) => {
+route.get("/api/auth/refreshtoken", verifyToken,  async (req: Request, res: Response) => {
   try {
     const token = generateToken({ userId: req.decoded?.userId, email: req.decoded?.email, username: req.decoded?.username });
     return res.status(200).json({ data: { token } });
@@ -43,8 +43,11 @@ route.use(
     changeOrigin: true,
   })
 );
-route.get("/api-upload", createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
-route.use("/api-upload", verifyToken, createProxyMiddleware("/api-upload",{ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
+// route.get("/api-upload", createProxyMiddleware({ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
+route.use("/api-upload",(req:Request,res:Response,next:NextFunction)=>{
+  if(req.method === "GET") return next()
+  return verifyToken(req,res,next);
+} , createProxyMiddleware("/api-upload",{ target: API_UPLOAD_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api-upload": "" } }));
 route.use("/api", verifyToken, createProxyMiddleware({ target: API_URL, changeOrigin: true, onProxyReq: fixRequestBody, pathRewrite: { "/api": "" } }));
 
 export default route;

@@ -4,7 +4,7 @@ import { useBarang } from "../utils";
 import Item from "./item";
 
 const Items = (props) => {
-  const { data, info, loading, error, addToKeranjang, setQuery, setData } = useBarang();
+  const { data,  loading, error, addToKeranjang, setQuery } = useBarang();
 
   useEffect(() => {
     if (props.newData) {
