@@ -11,7 +11,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     networks:
       - closed
-      - outside
 
   mongo-express:
     image: mongo-express
@@ -40,7 +39,6 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - closed
-      - outside
 
   adminer:
     image: adminer
@@ -82,7 +80,6 @@ services:
       - 4001:4001
     networks:
       - closed
-      - outside
   
   upload:
     image: upload
@@ -101,7 +98,6 @@ services:
       HOST_DB: mongo
     networks:
       - closed
-      - outside
     depends_on:
       - mongo
   
